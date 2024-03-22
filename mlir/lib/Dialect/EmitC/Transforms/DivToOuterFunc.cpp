@@ -33,8 +33,7 @@ namespace
 
     // private methods section
     private:
-      
-
+    
       // checks the operation
       void check_operation(Operation *op, OpBuilder& builder, ModuleOp& module, Region& region, Block& block)
       {
