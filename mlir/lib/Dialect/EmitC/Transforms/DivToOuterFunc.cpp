@@ -23,6 +23,8 @@ namespace
   {
     void runOnOperation() override 
     {
+      ++pass_called_num;
+
       Operation* rootOp = getOperation();
       auto module = castToModule(rootOp);
 
@@ -46,61 +48,75 @@ namespace
 
       // print_all_ops(rootOp);
 
-      get_div_op(rootOp);
+      check_operation(rootOp);
+
+      print_debug_data();
     }
 
-
-    // void print_all_ops(Operation *op)
-    // {
-
-    // }
-
-    // bool isModule(Operation *op) 
-    // {
-    //   return op->hasTrait<OpTrait::IsAModule>();
-    // }
-
-    // OK
-    ModuleOp castToModule(Operation *op) 
-    {
-      return dyn_cast<ModuleOp>(op);
-    }     
-
-    void get_div_op(Operation *op)
-    {
-      llvm::StringRef div_strref = "emitc.div";
-      auto cur_op_name = op->getName().getStringRef();
+    // private methods section
+    private:
       
-
-      if (cur_op_name == div_strref)
+      // casts the root operation to the module
+      ModuleOp castToModule(Operation *op) 
       {
-        llvm::outs() << cur_op_name;
+        return dyn_cast<ModuleOp>(op);
+      }     
+
+      // checks the operation
+      void check_operation(Operation *op)
+      {
+        llvm::StringRef div_strref = "emitc.div";
+        auto cur_op_name = op->getName().getStringRef();
+        
+        if (cur_op_name == div_strref)
+        {
+          ++cur_func_num;
+        }
+
+        for (Region &region : op->getRegions())
+          check_regions(region);
       }
 
-      for (Region &region : op->getRegions())
-        check_div_in_reg(region);
-    }
+      // iterates on all blocks in the region
+      void check_regions(Region& region)
+      {
+        for (Block &block : region.getBlocks())
+          check_blocks(block);
+      }
 
-    void check_div_in_reg(Region& region)
-    {
-      for (Block &block : region.getBlocks())
-        check_div_in_block(block);
-    }
+      // iterates on all operation in the block
+      void check_blocks(Block &block)
+      {
+        for (Operation &op : block.getOperations())
+          check_operation(&op);
+      }
+      
+      void getDependentDialects(DialectRegistry &registry) const override 
+      {
+        registry.insert<emitc::EmitCDialect>();
+      }
 
-    void check_div_in_block(Block &block)
-    {
-      for (Operation &op : block.getOperations())
-        get_div_op(&op);
-    }
-    
-    void getDependentDialects(DialectRegistry &registry) const override 
-    {
-      registry.insert<emitc::EmitCDialect>();
-    }
+      // prints the debugging info to the treminal (DEBUG ONLY)  
+      void print_debug_data()
+      {
+        llvm::raw_ostream &outs = llvm::outs(); // the ref to the terminal output 
 
+        outs << "\n=================================DEBUG=================================\n";
+        outs << "The total number of created funcs = " << cur_func_num << "\n";
+        outs << "The total number of pass calls = " << pass_called_num << "\n";
+        outs << "=================================DEBUG=================================\n";
+      }
+
+    // private variables section
+    private:
+      static size_t cur_func_num;    // stores total number of created function in order to create lables
+      static size_t pass_called_num; // stores the total number of times when pass called
   }; 
-} // namespace
 
+size_t DivToOuterFuncPass::cur_func_num = 0;    // stores total number of created function in order to create lables
+size_t DivToOuterFuncPass::pass_called_num = 0; // stores the total number of times when pass called
+
+} // namespace
 
 // Creates an instance of the C-style expressions forming pass.
 // Exposes this pass to the outside world.
