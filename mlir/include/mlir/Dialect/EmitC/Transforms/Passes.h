@@ -20,6 +20,7 @@ namespace emitc {
 
 /// Creates an instance of the C-style expressions forming pass.
 std::unique_ptr<Pass> createFormExpressionsPass();
+std::unique_ptr<Pass> createDivToOuterFuncPass();
 
 //===----------------------------------------------------------------------===//
 // Registration

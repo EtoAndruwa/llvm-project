@@ -21,4 +21,14 @@ def FormExpressions : Pass<"form-expressions"> {
   let dependentDialects = ["emitc::EmitCDialect"];
 }
 
+def DivToOuterFunc : Pass<"div-to-outer-func"> {
+  let summary = "Wraps the emit.div with function call outside the module";
+  let description = [{
+    This pass wraps the emit.div operation with the emitc.call 
+    to the created function outside the given module.
+  }];
+  let constructor = "mlir::emitc::createDivToOuterFuncPass()";
+  let dependentDialects = ["emitc::EmitCDialect"];
+}
+
 #endif // MLIR_DIALECT_EMITC_TRANSFORMS_PASSES
