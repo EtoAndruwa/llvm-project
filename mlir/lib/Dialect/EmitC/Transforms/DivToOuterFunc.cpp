@@ -23,133 +23,105 @@ namespace
   {
     void runOnOperation() override 
     {
-      // ++pass_called_num;
+      MLIRContext* context = &getContext();
       Operation* rootOp = getOperation();
-      OpBuilder builder(&getContext());
+      rootOpPtr = rootOp; // saving rootOp ptr in the class's field
+      OpBuilder builder(context);
 
-      check_operation(builder, nullptr, nullptr, nullptr, rootOp);
+      check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
       // print_debug_data();
-      print_op_names(rootOp);
+      // print_op_names(rootOp);
     }
 
     // private methods section
     private:
     
-      
-
       // checks the operation
-      void check_operation(OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
+      void check_operation(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {
         llvm::StringRef div_strref = "emitc.div";
-        llvm::StringRef module_name = "builtin.module";
         auto cur_op_name = op->getName().getStringRef();
 
-        if (cur_op_name == module_name)
-        { 
-          llvm::outs() << "module!\n";
-          size_t reg_num = count_regs_in_module(op);
-          llvm::outs() << "before reg_num: " << reg_num << "\n";
-
-          FuncOp func = FuncOp::create(builder.getUnknownLoc(), "my_func",
-                                      FunctionType::get(builder.getContext(), {}, {}));
-
-          builder.setInsertionPointToEnd(&func.getBody().front());
-          builder.create<ReturnOp>(builder.getUnknownLoc());
-          castToModule(op).push_back(func);
-
-          llvm::outs() << "after reg_num: " << reg_num << "\n";
-        }
-
-        // if (region != nullptr && region->hasOneBlock() && cur_op_name != module_name)
-        // {
-        //   region->viewGraph();
-        //   Block* new_block = new Block();
-        //   region->push_back(new_block);
-        //   Block* new_block1 = new Block();
-        //   region->push_back(new_block1);
-        //   llvm::outs() << "region->getBlocks().size() = " << region->getBlocks().size() << "\n";
-        //   region->viewGraph();
-        // }
+        // llvm::outs() << "cur_op_name: " << cur_op_name << "\n";
+        // print_op_attrs(op, context);
 
         if (cur_op_name == div_strref)
         {
-          // create_div_wrapper(builder, module, region, block, op);
-          // auto intType = builder.getIntegerType(32);
-          // SmallVector<Type, 2> inputTypes({intType, intType});
-          // SmallVector<Type, 1> resultTypes({intType});
-
-          // // Create operands for input values
-          // Value operand1 = builder.create<emitc::ConstantOp>(builder.getUnknownLoc(), intType, builder.getIntegerAttr(intType, 10));
-          // Value operand2 = builder.create<emitc::ConstantOp>(builder.getUnknownLoc(), intType, builder.getIntegerAttr(intType, 20));
-
-          // Create an EmitC call operation and add it to the module
-          auto calleeAttr = builder.getStringAttr("foo_0");
-          OperationState state(builder.getUnknownLoc(), "emitc.call");
-          state.addAttribute("callee", calleeAttr);
-          Operation *callOp = Operation::create(state);
-          block->push_back(callOp);
-
-
-          // std::string cur_func_name = "foo_" + std::to_string(cur_func_num);
-
-     
-          // OperationState state(builder.getUnknownLoc(), "emitc.call");
-          // state.addAttribute("callee", builder.getStringAttr(cur_func_name));
-
-          // // Add other attributes, operands, and results as needed
-
-          // Operation *callOp = Operation::create(state);
-          // module.push_back(callOp);
+          auto operands_num = op->getNumOperands();
+          llvm::outs() << "operands_num: " << operands_num << "\n"; 
+    
+          auto oper_type_itr = op->operand_type_begin();
+          for (size_t i = 0; i < operands_num; ++i)
+          {
+            llvm::outs() << "Op(" << i << "): " << op->getOperand(i) << " operand type: " << *oper_type_itr << "\n";
+            ++oper_type_itr; 
+          }
+        
           ++cur_func_num;
         }
 
-        size_t reg_count = 0;
-        for (Region &region_it: op->getRegions())
+          check_ops_regions(context, builder, module, region, block, op);
+      }
+
+      void create_div_wrapper(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
+      {    
+        if (module == nullptr)
         {
-          llvm::outs() << "reg: " << reg_count << "\n";
-          check_regions(builder, module, &region_it, block);
-          ++reg_count;
+          region->viewGraph();
+          llvm::outs() << "adding new block to the region\n";
+
+          Operation* new_op = builder.create<FuncOp>(builder.getUnknownLoc(), "my_function",
+                                         FunctionType::get(context, {}, {}));
+
+          new_op->print(llvm::outs());
+
+          FuncOp funcOp = dyn_cast<FuncOp>(new_op);
+          // builder.setInsertionPointToStart(entryBlock);
+          // builder.create<emitc::ReturnOp>(builder.getUnknownLoc());
+
+
+          // region->push_back(BodyBlock);
+          region->viewGraph();
+        }
+        else 
+        {
+          llvm::outs() << "module nullptr\n";
         }
       }
 
-
-
-      void create_div_wrapper(OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
+      // iterates on all regions in the operation
+      void check_ops_regions(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {
-        Location loc = builder.getUnknownLoc();
-        auto funcType = builder.getFunctionType({}, {});
-
-        OperationState state(loc, "emitc.func");
-        state.addAttribute("sym_name", builder.getStringAttr("foo_0"));
-        state.addAttribute("type", TypeAttr::get(funcType));
-        Operation *funcOp = Operation::create(state);
-        block->push_back(funcOp);
-        // Region &region = module->getBodyRegion();
-        // Block &block = region->getBodyBlock();
-        // block.push_back(funcOp);
+        size_t reg_count = 0;
+        for (Region &region_it: op->getRegions())
+        {
+          // llvm::outs() << "reg: " << reg_count << "\n";
+          ++reg_count;
+          check_regions(context, builder, module, &region_it, block);
+        }
       }
 
       // iterates on all blocks in the region
-      void check_regions(OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
+      void check_regions(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
       {
         size_t block_count = 0;
         for (Block &block_it: region->getBlocks())
         {
-          llvm::outs() << "block: " << block_count << "\n";
-          check_blocks(builder, module, region, &block_it);
+          // llvm::outs() << "block: " << block_count << "\n";
           ++block_count;
+          check_blocks(context, builder, module, region, &block_it);
         }
       }
 
       // iterates on all operation in the block
-      void check_blocks(OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
+      void check_blocks(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
       {
         size_t op_count = 0;
         for (Operation &op_it: block->getOperations())
         {
-          llvm::outs() << "op: " << op_count << "\n";
-          check_operation(builder, module, region, block, &op_it);
+          // llvm::outs() << "op: " << op_count << "\n";
           ++op_count;
+          check_operation(context, builder, module, region, block, &op_it);
         }
       }
       
@@ -158,6 +130,7 @@ namespace
         registry.insert<emitc::EmitCDialect>();
       }
 
+      // clones all opetaions from block src to dest
       void clone_block(Block* const src, Block* const dest)
       {
         for (Operation &op_it : *src) 
@@ -167,6 +140,29 @@ namespace
         }
       }
 
+      void print_op_attrs(Operation* op, MLIRContext* context)
+      {
+        ArrayRef<NamedAttribute> attrsRef = op->getAttrs();
+
+        // Construct a DictionaryAttr from the ArrayRef<NamedAttribute>.
+        DictionaryAttr attrs = DictionaryAttr::get(context, attrsRef);
+
+        // Iterate over attributes and print their names and values.
+        for (NamedAttribute attr : attrsRef) {
+          llvm::outs() << "Attribute: " << attr.getName() << ", Value: ";
+          if (attr.getValue()) 
+          {
+            llvm::outs() << attr.getValue();
+          } 
+          else 
+          {
+            llvm::outs() << "<null>";
+          }
+          llvm::outs() << "\n";
+        }
+      }
+
+      // count the number of regions in the module
       size_t count_regs_in_module(Operation* op)
       {
         size_t regionCount = 0;
@@ -195,19 +191,19 @@ namespace
       }
 
       // prints op's attributes (DEBUG ONLY)  
-      void print_op_attrs(Operation* const op)  
-      {
-        static size_t op_number = 0;
-        ArrayRef<NamedAttribute> attrs = op->getAttrs();
+      // void print_op_attrs(Operation* const op)  
+      // {
+      //   static size_t op_number = 0;
+      //   ArrayRef<NamedAttribute> attrs = op->getAttrs();
 
-        llvm::outs () << "=========================OP_" << op_number << "=========================\n";
-        for (auto attr : attrs) 
-        {
-          llvm::outs() << "Attribute: " << attr.getName() << ", Value: " << attr.getValue() << "\n";
-        }
-        llvm::outs () << "=========================OP_" << op_number << "=========================\n\n";
-        ++op_number;
-      }
+      //   llvm::outs () << "=========================OP_" << op_number << "=========================\n";
+      //   for (auto attr : attrs) 
+      //   {
+      //     llvm::outs() << "Attribute: " << attr.getName() << ", Value: " << attr.getValue() << "\n";
+      //   }
+      //   llvm::outs () << "=========================OP_" << op_number << "=========================\n\n";
+      //   ++op_number;
+      // }
 
       // prints op's names (DEBUG ONLY)  
       void print_op_names(Operation* const op)  
@@ -222,6 +218,7 @@ namespace
     // private variables section
     private:
       static size_t cur_func_num;    // stores total number of created function in order to create lables
+      mlir::Operation* rootOpPtr = nullptr;
   }; 
 
 size_t DivToOuterFuncPass::cur_func_num = 0;    // stores total number of created function in order to create lables
