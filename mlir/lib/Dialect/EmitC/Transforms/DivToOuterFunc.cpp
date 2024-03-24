@@ -28,24 +28,48 @@ namespace
       OpBuilder builder(&getContext());
 
       check_operation(builder, nullptr, nullptr, nullptr, rootOp);
-      print_debug_data();
+      // print_debug_data();
+      print_op_names(rootOp);
     }
 
     // private methods section
     private:
     
+      
+
       // checks the operation
       void check_operation(OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {
         llvm::StringRef div_strref = "emitc.div";
+        llvm::StringRef module_name = "builtin.module";
         auto cur_op_name = op->getName().getStringRef();
 
-        print_op_names(op);
+        if (cur_op_name == module_name)
+        { 
+          llvm::outs() << "module!\n";
+          size_t reg_num = count_regs_in_module(op);
+          llvm::outs() << "before reg_num: " << reg_num << "\n";
 
-        if (region != nullptr && region->getBlocks().size() == 1)
-        {
-          // llvm::outs() << "region->getBlocks().size() == 1\n";
+          FuncOp func = FuncOp::create(builder.getUnknownLoc(), "my_func",
+                                      FunctionType::get(builder.getContext(), {}, {}));
+
+          builder.setInsertionPointToEnd(&func.getBody().front());
+          builder.create<ReturnOp>(builder.getUnknownLoc());
+          castToModule(op).push_back(func);
+
+          llvm::outs() << "after reg_num: " << reg_num << "\n";
         }
+
+        // if (region != nullptr && region->hasOneBlock() && cur_op_name != module_name)
+        // {
+        //   region->viewGraph();
+        //   Block* new_block = new Block();
+        //   region->push_back(new_block);
+        //   Block* new_block1 = new Block();
+        //   region->push_back(new_block1);
+        //   llvm::outs() << "region->getBlocks().size() = " << region->getBlocks().size() << "\n";
+        //   region->viewGraph();
+        // }
 
         if (cur_op_name == div_strref)
         {
@@ -79,11 +103,16 @@ namespace
           ++cur_func_num;
         }
 
+        size_t reg_count = 0;
         for (Region &region_it: op->getRegions())
         {
+          llvm::outs() << "reg: " << reg_count << "\n";
           check_regions(builder, module, &region_it, block);
+          ++reg_count;
         }
       }
+
+
 
       void create_div_wrapper(OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {
@@ -103,15 +132,25 @@ namespace
       // iterates on all blocks in the region
       void check_regions(OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
       {
+        size_t block_count = 0;
         for (Block &block_it: region->getBlocks())
+        {
+          llvm::outs() << "block: " << block_count << "\n";
           check_blocks(builder, module, region, &block_it);
+          ++block_count;
+        }
       }
 
       // iterates on all operation in the block
-      void check_blocks(OpBuilder& builder, ModuleOp* module, Region* region, Block *block)
+      void check_blocks(OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
       {
+        size_t op_count = 0;
         for (Operation &op_it: block->getOperations())
+        {
+          llvm::outs() << "op: " << op_count << "\n";
           check_operation(builder, module, region, block, &op_it);
+          ++op_count;
+        }
       }
       
       void getDependentDialects(DialectRegistry &registry) const override 
@@ -119,13 +158,32 @@ namespace
         registry.insert<emitc::EmitCDialect>();
       }
 
+      void clone_block(Block* const src, Block* const dest)
+      {
+        for (Operation &op_it : *src) 
+        {
+          Operation* clonedOp = op_it.clone();
+          dest->push_back(clonedOp);
+        }
+      }
+
+      size_t count_regs_in_module(Operation* op)
+      {
+        size_t regionCount = 0;
+        for (Region &region : op->getRegions())
+        {
+          ++regionCount;
+        }
+
+        return regionCount;
+      }
 
       // casts the root operation to the module
       ModuleOp castToModule(Operation* op) 
       {
         return dyn_cast<ModuleOp>(op);
       }   
-        
+
       // prints the debugging info to the treminal (DEBUG ONLY)  
       void print_debug_data()
       {
@@ -137,7 +195,7 @@ namespace
       }
 
       // prints op's attributes (DEBUG ONLY)  
-      void print_op_attrs(Operation* op)
+      void print_op_attrs(Operation* const op)  
       {
         static size_t op_number = 0;
         ArrayRef<NamedAttribute> attrs = op->getAttrs();
@@ -152,10 +210,9 @@ namespace
       }
 
       // prints op's names (DEBUG ONLY)  
-      void print_op_names(Operation* op)
+      void print_op_names(Operation* const op)  
       {
         static size_t op_number = 0;
-
         llvm::outs () << "=========================OP_" << op_number << "=========================\n";
         llvm::outs () << "Operation name: " << op->getName() << "\n";  
         llvm::outs () << "=========================OP_" << op_number << "=========================\n\n";
