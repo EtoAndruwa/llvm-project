@@ -23,38 +23,12 @@ namespace
   {
     void runOnOperation() override 
     {
-      
       MLIRContext* context = &getContext();
       Operation* rootOp = getOperation();
       OpBuilder builder(context);
-
-      rootModulePtr = rootOp; // saving module ptr in the class's field
-      
-      Region& reg = rootModulePtr->getRegion(0);
-      reg.viewGraph();
-      OpBuilder reg_builder(reg);
-
-      FunctionType funcType = reg_builder.getFunctionType({}, {builder.getIntegerType(32)});
-      Location loc = reg_builder.getUnknownLoc();
-      FuncOp funcOp = reg_builder.create<FuncOp>(loc, "myFunction", funcType);
-      // Operation* constOp = builder.create<ConstantOp>(builder.getUnknownLoc(), IntegerAttr::get(IntegerType::get(context, 32), 42));
-
-      Block* entryBlock = funcOp.addEntryBlock();
-      OpBuilder entryBlock_builder(entryBlock, entryBlock->begin());
-
-      Type i32Type = IntegerType::get(context, 32);
-
-      Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
-      Value constantValue = entryBlock_builder.create<ConstantOp>(entryBlock_builder.getUnknownLoc(), i32Type, intAttr);
-      entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value(constantValue));
-
-      reg.viewGraph();
-      
-
-      // for (auto &nestedOp : *block)
-      //   printOperation(&nestedOp, llvm::outs(), 1);
-
-      // check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
+      module_ptr = rootOp; // saving module ptr in the class's field
+    
+      check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
       // printOperation(rootOp, llvm::outs());
     }
 
@@ -67,11 +41,9 @@ namespace
         llvm::StringRef div_strref = "emitc.div";
         auto cur_op_name = op->getName().getStringRef();
 
-        // llvm::outs() << "cur_op_name: " << cur_op_name << "\n";
-        // print_op_attrs(op, context);
-
         if (cur_op_name == div_strref)
         {
+          // here we must get all operands and their types
           auto operands_num = op->getNumOperands();
           llvm::outs() << "operands_num: " << operands_num << "\n"; 
           auto results_num  = op->getNumResults();
@@ -90,9 +62,17 @@ namespace
             llvm::outs() << "Res(" << i << "): [" << op->getResult(i) << "] result type: " << *res_type_itr << "\n";
             ++res_type_itr; 
           }
+          // here we must get everything for func creation
 
-          create_div_wrapper(context, builder, module, region, block, op);
+          Region& reg = module_ptr->getRegion(0); // getting the first region in the module
+          OpBuilder reg_builder(reg);
+
+          create_div_wrapper(context, reg_builder, module, region, block, op);
         
+          // here we must delete move/delete or something with emitc.div
+
+          // here we must call function 
+
           ++cur_func_num;
         }
 
@@ -101,15 +81,32 @@ namespace
 
       void create_div_wrapper(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {    
-          region->viewGraph();
-          llvm::outs() << "adding new block to the module\n";
+        region->viewGraph();
 
-          // FunctionType funcType = FunctionType::get(context, {}, {});
-          // FuncOp funcOp = FuncOp::create(builder.getUnknownLoc(), "myFunction", funcType);
-          // rootOpPtr->push_back(funcOp);
-         
-          region->viewGraph();
+        create_emitc_func_decl(context, builder);
+        
+        region->viewGraph();
       }
+
+      void create_emitc_func_decl(MLIRContext* context, OpBuilder& builder)
+      {
+        FunctionType funcType = builder.getFunctionType({}, {builder.getIntegerType(32)}); // here we must specify types
+        Location loc = builder.getUnknownLoc();
+        FuncOp funcOp = builder.create<FuncOp>(loc, func_name + std::to_string(cur_func_num), funcType);
+
+        Block* entryBlock = funcOp.addEntryBlock();
+        OpBuilder entryBlock_builder(entryBlock, entryBlock->begin());
+
+        Type i32Type = IntegerType::get(context, 32);
+        Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
+        Value constantValue = entryBlock_builder.create<ConstantOp>(entryBlock_builder.getUnknownLoc(), i32Type, intAttr);
+        entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value(constantValue));
+      }
+
+      // void create_retop()
+      // {
+
+      // }
 
       // iterates on all regions in the operation
       void check_ops_regions(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
@@ -222,28 +219,12 @@ namespace
         ++op_number;
       }
 
-      void printOperation(Operation* op, llvm::raw_ostream &os, unsigned indent = 0) 
-      {
-        for (unsigned i = 0; i < indent; ++i)
-        {
-          os << "  ";
-        }
-
-        // Print the operation
-        op->print(os);
-        os << "\n";
-
-        // Recursively print the nested operations if any
-        for (auto &region : op->getRegions())
-          for (auto &block : region)
-            for (auto &nestedOp : block)
-              printOperation(&nestedOp, os, indent + 1);
-      }
-
     // private variables section
     private:
       static size_t cur_func_num;    // stores total number of created function in order to create lables
-      mlir::Operation* rootModulePtr = nullptr;
+      std::string func_name = "wrapped_div_func";
+      Operation* module_ptr = nullptr;
+      Region* first_module_reg = nullptr;
   }; 
 
 size_t DivToOuterFuncPass::cur_func_num = 0;    // stores total number of created function in order to create lables
