@@ -28,7 +28,10 @@ namespace
       OpBuilder builder(context);
       module_ptr = rootOp; // saving module ptr in the class's field
     
+      Region& reg = module_ptr->getRegion(0);
+      reg.viewGraph();
       check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
+      reg.viewGraph();
       // printOperation(rootOp, llvm::outs());
     }
 
@@ -44,30 +47,18 @@ namespace
         if (cur_op_name == div_strref)
         {
           // here we must get all operands and their types
-          auto operands_num = op->getNumOperands();
-          llvm::outs() << "operands_num: " << operands_num << "\n"; 
-          auto results_num  = op->getNumResults();
-          llvm::outs() << "results_num: " << results_num << "\n"; 
-    
-          auto oper_type_itr = op->operand_type_begin();
-          for (size_t i = 0; i < operands_num; ++i)
-          {
-            llvm::outs() << "Op(" << i << "): [" << op->getOperand(i) << "] operand type: " << *oper_type_itr << "\n";
-            ++oper_type_itr; 
-          }
-          
-          auto res_type_itr = op->result_type_begin();
-          for (size_t i = 0; i < results_num; ++i)
-          {
-            llvm::outs() << "Res(" << i << "): [" << op->getResult(i) << "] result type: " << *res_type_itr << "\n";
-            ++res_type_itr; 
-          }
+
+          std::vector<Type> return_types = getReturnTypes(op);
+          print_types(return_types);
+          std::vector<Type> operand_types = getOperandTypes(op);
+          print_types(operand_types);
           // here we must get everything for func creation
+
 
           Region& reg = module_ptr->getRegion(0); // getting the first region in the module
           OpBuilder reg_builder(reg);
 
-          create_div_wrapper(context, reg_builder, module, region, block, op);
+          create_div_wrapper(context, reg_builder, operand_types, return_types);
         
           // here we must delete move/delete or something with emitc.div
 
@@ -79,16 +70,32 @@ namespace
           check_ops_regions(context, builder, module, region, block, op);
       }
 
-      void create_div_wrapper(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
-      {    
-        region->viewGraph();
-
-        create_emitc_func_decl(context, builder);
-        
-        region->viewGraph();
+      std::vector<Type> getReturnTypes(Operation *op) 
+      {
+          std::vector<Type> returnTypes;
+          for (Type resultType: op->getResultTypes()) 
+          {
+            returnTypes.push_back(resultType);
+          }
+          return returnTypes;
       }
 
-      void create_emitc_func_decl(MLIRContext* context, OpBuilder& builder)
+      std::vector<Type> getOperandTypes(Operation *op) 
+      {
+          std::vector<Type> operandTypes;
+          for (Type operandType: op->getOperandTypes()) 
+          {
+            operandTypes.push_back(operandType);
+          }
+          return operandTypes;
+      }
+
+      void create_div_wrapper(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
+      {    
+        create_emitc_func_decl(context, builder, operand_types, return_types);
+      }
+
+      void create_emitc_func_decl(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
       {
         FunctionType funcType = builder.getFunctionType({}, {builder.getIntegerType(32)}); // here we must specify types
         Location loc = builder.getUnknownLoc();
@@ -103,10 +110,13 @@ namespace
         entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value(constantValue));
       }
 
-      // void create_retop()
-      // {
-
-      // }
+      void print_types(std::vector<Type>& op_types)
+      {
+        for (Type op_type : op_types) 
+        {
+          llvm::outs() << "Type: " << op_type << "\n";
+        }
+      }
 
       // iterates on all regions in the operation
       void check_ops_regions(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
