@@ -104,18 +104,22 @@ namespace
       void create_div_wrapper(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
       {    
         SmallVector<Type> argTypes; 
+        SmallVector<Type> retTypes; 
         build_op_types(argTypes, operand_types, builder);
+        build_op_types(retTypes, return_types, builder);
 
-        FunctionType funcType = builder.getFunctionType({argTypes}, {builder.getIntegerType(32)}); // here we must specify types 
+        FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); // here we must specify types 
         FuncOp funcOp = builder.create<FuncOp>(builder.getUnknownLoc(), func_name + std::to_string(cur_func_num), funcType);
 
         Block* entryBlock = funcOp.addEntryBlock();
         OpBuilder entryBlock_builder(entryBlock, entryBlock->begin());
 
-        Type i32Type = IntegerType::get(context, 32);
-        Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
-        Value constantValue = entryBlock_builder.create<ConstantOp>(entryBlock_builder.getUnknownLoc(), i32Type, intAttr);
-        entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value(constantValue));
+        Value arg1 = entryBlock->getArgument(0);
+        Value arg2 = entryBlock->getArgument(1);
+        
+        // here is the problem with div func
+        // Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
+        // entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
       }
 
       // prints the types of returms/operand values (DEBUG ONLY)  
@@ -145,10 +149,8 @@ namespace
             return j;
           }
         }
-
         // return error_code::OPAQUE_VAL;
       }
-
 
       // creates the types of operands using builder.get...()
       void build_op_types(SmallVector<Type>& argTypes, std::vector<Type>& operand_types, OpBuilder& builder)
