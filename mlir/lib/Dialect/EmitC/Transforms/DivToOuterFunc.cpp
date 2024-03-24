@@ -23,14 +23,30 @@ namespace
   {
     void runOnOperation() override 
     {
+      
       MLIRContext* context = &getContext();
       Operation* rootOp = getOperation();
-      rootOpPtr = rootOp; // saving rootOp ptr in the class's field
       OpBuilder builder(context);
 
-      check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
-      // print_debug_data();
-      // print_op_names(rootOp);
+      rootModulePtr = rootOp; // saving module ptr in the class's field
+      
+      Region& reg = rootModulePtr->getRegion(0);
+      reg.viewGraph();
+      OpBuilder reg_builder(reg);
+
+      FunctionType funcType = reg_builder.getFunctionType({}, {});
+      Location loc = reg_builder.getUnknownLoc();
+      FuncOp funcOp = reg_builder.create<FuncOp>(loc, "myFunction", funcType);
+
+      // Operation* constOp = builder.create<ConstantOp>(builder.getUnknownLoc(), IntegerAttr::get(IntegerType::get(context, 32), 42));
+      reg.viewGraph();
+      
+
+      // for (auto &nestedOp : *block)
+      //   printOperation(&nestedOp, llvm::outs(), 1);
+
+      // check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
+      // printOperation(rootOp, llvm::outs());
     }
 
     // private methods section
@@ -49,13 +65,24 @@ namespace
         {
           auto operands_num = op->getNumOperands();
           llvm::outs() << "operands_num: " << operands_num << "\n"; 
+          auto results_num  = op->getNumResults();
+          llvm::outs() << "results_num: " << results_num << "\n"; 
     
           auto oper_type_itr = op->operand_type_begin();
           for (size_t i = 0; i < operands_num; ++i)
           {
-            llvm::outs() << "Op(" << i << "): " << op->getOperand(i) << " operand type: " << *oper_type_itr << "\n";
+            llvm::outs() << "Op(" << i << "): [" << op->getOperand(i) << "] operand type: " << *oper_type_itr << "\n";
             ++oper_type_itr; 
           }
+          
+          auto res_type_itr = op->result_type_begin();
+          for (size_t i = 0; i < results_num; ++i)
+          {
+            llvm::outs() << "Res(" << i << "): [" << op->getResult(i) << "] result type: " << *res_type_itr << "\n";
+            ++res_type_itr; 
+          }
+
+          create_div_wrapper(context, builder, module, region, block, op);
         
           ++cur_func_num;
         }
@@ -65,28 +92,14 @@ namespace
 
       void create_div_wrapper(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {    
-        if (module == nullptr)
-        {
           region->viewGraph();
-          llvm::outs() << "adding new block to the region\n";
+          llvm::outs() << "adding new block to the module\n";
 
-          Operation* new_op = builder.create<FuncOp>(builder.getUnknownLoc(), "my_function",
-                                         FunctionType::get(context, {}, {}));
-
-          new_op->print(llvm::outs());
-
-          FuncOp funcOp = dyn_cast<FuncOp>(new_op);
-          // builder.setInsertionPointToStart(entryBlock);
-          // builder.create<emitc::ReturnOp>(builder.getUnknownLoc());
-
-
-          // region->push_back(BodyBlock);
+          // FunctionType funcType = FunctionType::get(context, {}, {});
+          // FuncOp funcOp = FuncOp::create(builder.getUnknownLoc(), "myFunction", funcType);
+          // rootOpPtr->push_back(funcOp);
+         
           region->viewGraph();
-        }
-        else 
-        {
-          llvm::outs() << "module nullptr\n";
-        }
       }
 
       // iterates on all regions in the operation
@@ -190,21 +203,6 @@ namespace
         outs << "=================================DEBUG=================================\n";
       }
 
-      // prints op's attributes (DEBUG ONLY)  
-      // void print_op_attrs(Operation* const op)  
-      // {
-      //   static size_t op_number = 0;
-      //   ArrayRef<NamedAttribute> attrs = op->getAttrs();
-
-      //   llvm::outs () << "=========================OP_" << op_number << "=========================\n";
-      //   for (auto attr : attrs) 
-      //   {
-      //     llvm::outs() << "Attribute: " << attr.getName() << ", Value: " << attr.getValue() << "\n";
-      //   }
-      //   llvm::outs () << "=========================OP_" << op_number << "=========================\n\n";
-      //   ++op_number;
-      // }
-
       // prints op's names (DEBUG ONLY)  
       void print_op_names(Operation* const op)  
       {
@@ -215,10 +213,28 @@ namespace
         ++op_number;
       }
 
+      void printOperation(Operation* op, llvm::raw_ostream &os, unsigned indent = 0) 
+      {
+        for (unsigned i = 0; i < indent; ++i)
+        {
+          os << "  ";
+        }
+
+        // Print the operation
+        op->print(os);
+        os << "\n";
+
+        // Recursively print the nested operations if any
+        for (auto &region : op->getRegions())
+          for (auto &block : region)
+            for (auto &nestedOp : block)
+              printOperation(&nestedOp, os, indent + 1);
+      }
+
     // private variables section
     private:
       static size_t cur_func_num;    // stores total number of created function in order to create lables
-      mlir::Operation* rootOpPtr = nullptr;
+      mlir::Operation* rootModulePtr = nullptr;
   }; 
 
 size_t DivToOuterFuncPass::cur_func_num = 0;    // stores total number of created function in order to create lables
