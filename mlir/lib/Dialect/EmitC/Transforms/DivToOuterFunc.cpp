@@ -34,11 +34,20 @@ namespace
       reg.viewGraph();
       OpBuilder reg_builder(reg);
 
-      FunctionType funcType = reg_builder.getFunctionType({}, {});
+      FunctionType funcType = reg_builder.getFunctionType({}, {builder.getIntegerType(32)});
       Location loc = reg_builder.getUnknownLoc();
       FuncOp funcOp = reg_builder.create<FuncOp>(loc, "myFunction", funcType);
-
       // Operation* constOp = builder.create<ConstantOp>(builder.getUnknownLoc(), IntegerAttr::get(IntegerType::get(context, 32), 42));
+
+      Block* entryBlock = funcOp.addEntryBlock();
+      OpBuilder entryBlock_builder(entryBlock, entryBlock->begin());
+
+      Type i32Type = IntegerType::get(context, 32);
+
+      Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
+      Value constantValue = entryBlock_builder.create<ConstantOp>(entryBlock_builder.getUnknownLoc(), i32Type, intAttr);
+      entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value(constantValue));
+
       reg.viewGraph();
       
 
