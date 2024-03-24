@@ -25,21 +25,32 @@ namespace
     {
       MLIRContext* context = &getContext();
       Operation* rootOp = getOperation();
-      OpBuilder builder(context);
       module_ptr = rootOp; // saving module ptr in the class's field
     
       Region& reg = module_ptr->getRegion(0);
       // reg.viewGraph();
-      check_operation(context, builder, nullptr, nullptr, nullptr, rootOp);
+      check_operation(context, nullptr, nullptr, rootOp);
       // reg.viewGraph();
-      // printOperation(rootOp, llvm::outs());
     }
+
+    public:
+      typedef enum class op_types
+      {
+        INT,
+        FLOAT,
+        OPAQUE,
+      }op_types;
+
+      // typedef enum class error_code
+      // {
+      //   OPAQUE_VAL = -1,
+      // }error_code;
 
     // private methods section
     private:
     
       // checks the operation
-      void check_operation(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
+      void check_operation(MLIRContext* context, Region* region, Block* block, Operation* op)
       {
         llvm::StringRef div_strref = "emitc.div";
         auto cur_op_name = op->getName().getStringRef();
@@ -65,7 +76,7 @@ namespace
           ++cur_func_num;
         }
 
-          check_ops_regions(context, builder, module, region, block, op);
+          check_ops_regions(context, region, block, op);
       }
 
       // return the vector for returns' types
@@ -92,12 +103,10 @@ namespace
 
       void create_div_wrapper(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
       {    
-        create_emitc_func_decl(context, builder, operand_types, return_types);
-      }
+        SmallVector<Type> argTypes; 
+        build_op_types(argTypes, operand_types, builder);
 
-      void create_emitc_func_decl(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
-      {
-        FunctionType funcType = builder.getFunctionType({}, {builder.getIntegerType(32)}); // here we must specify types
+        FunctionType funcType = builder.getFunctionType({argTypes}, {builder.getIntegerType(32)}); // here we must specify types 
         FuncOp funcOp = builder.create<FuncOp>(builder.getUnknownLoc(), func_name + std::to_string(cur_func_num), funcType);
 
         Block* entryBlock = funcOp.addEntryBlock();
@@ -118,13 +127,13 @@ namespace
         }
       }
 
+      // gets the lenght of the int/float (32-bit, 64-bit or etc.)
       int get_bit_length(std::vector<Type>& operand_types, size_t operand_index)
       {
         for (size_t j = 8; j <= 64; j *= 2)
         {
           if (operand_types[operand_index].isa<IntegerType>() && operand_types[operand_index].cast<IntegerType>().getWidth() == j)
           {
-            // llvm::outs() << "IntegerType" << j << "\n";
             return j;
           }
         }
@@ -133,14 +142,44 @@ namespace
         {
           if (operand_types[operand_index].isa<FloatType>() && operand_types[operand_index].cast<FloatType>().getWidth() == j)
           {
-            // llvm::outs() << "FloatType" << j << "\n";
             return j;
           }
         }
 
-        return error_code::OPAQUE;
+        // return error_code::OPAQUE_VAL;
       }
 
+
+      // creates the types of operands using builder.get...()
+      void build_op_types(SmallVector<Type>& argTypes, std::vector<Type>& operand_types, OpBuilder& builder)
+      {
+        for (size_t i = 0; i < 2; ++i)
+        {
+          switch (get_operand_type(operand_types, i))
+          {
+          case op_types::INT:
+            argTypes.push_back(builder.getIntegerType(get_bit_length(operand_types, i)));
+            break;
+          case op_types::FLOAT:
+            if (get_bit_length(operand_types, i) == 32)
+            {
+              argTypes.push_back(builder.getF32Type());
+            }
+            else 
+            {
+              argTypes.push_back(builder.getF64Type());
+            }
+            break;
+          // case op_types::OPAQUE:
+          //   // argTypes.push_back(builder.getOpaque());
+          //   break;
+          default:
+            break;
+          }
+        }
+      }
+
+      // gets the operands types (INT, FLOAT, OPAQUE)
       op_types get_operand_type(std::vector<Type>& operand_types, size_t operand_index)
       {
         for (size_t j = 8; j <= 64; j *= 2)
@@ -159,42 +198,42 @@ namespace
           }
         }
 
-        return op_types::OPAQUE;
+        // HERE MUST BE OPAQUE
       }
 
       // iterates on all regions in the operation
-      void check_ops_regions(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
+      void check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op)
       {
         size_t reg_count = 0;
         for (Region &region_it: op->getRegions())
         {
           // llvm::outs() << "reg: " << reg_count << "\n";
           ++reg_count;
-          check_regions(context, builder, module, &region_it, block);
+          check_regions(context, &region_it, block);
         }
       }
 
       // iterates on all blocks in the region
-      void check_regions(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
+      void check_regions(MLIRContext* context, Region* region, Block* block)
       {
         size_t block_count = 0;
         for (Block &block_it: region->getBlocks())
         {
           // llvm::outs() << "block: " << block_count << "\n";
           ++block_count;
-          check_blocks(context, builder, module, region, &block_it);
+          check_blocks(context, region, &block_it);
         }
       }
 
       // iterates on all operation in the block
-      void check_blocks(MLIRContext* context, OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
+      void check_blocks(MLIRContext* context, Region* region, Block* block)
       {
         size_t op_count = 0;
         for (Operation &op_it: block->getOperations())
         {
           // llvm::outs() << "op: " << op_count << "\n";
           ++op_count;
-          check_operation(context, builder, module, region, block, &op_it);
+          check_operation(context, region, block, &op_it);
         }
       }
       
@@ -202,57 +241,6 @@ namespace
       {
         registry.insert<emitc::EmitCDialect>();
       }
-
-      // clones all opetaions from block src to dest
-      void clone_block(Block* const src, Block* const dest)
-      {
-        for (Operation &op_it : *src) 
-        {
-          Operation* clonedOp = op_it.clone();
-          dest->push_back(clonedOp);
-        }
-      }
-
-      // 
-      void print_op_attrs(Operation* op, MLIRContext* context)
-      {
-        ArrayRef<NamedAttribute> attrsRef = op->getAttrs();
-
-        // Construct a DictionaryAttr from the ArrayRef<NamedAttribute>.
-        DictionaryAttr attrs = DictionaryAttr::get(context, attrsRef);
-
-        // Iterate over attributes and print their names and values.
-        for (NamedAttribute attr : attrsRef) {
-          llvm::outs() << "Attribute: " << attr.getName() << ", Value: ";
-          if (attr.getValue()) 
-          {
-            llvm::outs() << attr.getValue();
-          } 
-          else 
-          {
-            llvm::outs() << "<null>";
-          }
-          llvm::outs() << "\n";
-        }
-      }
-
-      // count the number of regions in the module
-      size_t count_regs_in_module(Operation* op)
-      {
-        size_t regionCount = 0;
-        for (Region &region : op->getRegions())
-        {
-          ++regionCount;
-        }
-
-        return regionCount;
-      }
-
-      // casts the root operation to the module
-      ModuleOp castToModule(Operation* op) 
-      {
-        return dyn_cast<ModuleOp>(op);
-      }   
 
       // prints the debugging info to the treminal (DEBUG ONLY)  
       void print_debug_data()
@@ -276,27 +264,11 @@ namespace
 
     // private variables section
     private:
-      static size_t cur_func_num;    // stores total number of created function in order to create lables
       std::string func_name = "wrapped_div_func";
       Operation* module_ptr = nullptr;
       Region* first_module_reg = nullptr;
- 
-      enum class op_types
-      {
-        INT,
-        FLOAT,
-        OPAQUE
-      };
-
-      enum class error_code
-      {
-        OPAQUE_VAL = -1;
-      };
-}; 
-
-size_t DivToOuterFuncPass::cur_func_num = 0;    // stores total number of created function in order to create lables
-// size_t DivToOuterFuncPass::pass_called_num = 0; // stores the total number of times when pass called
-
+      size_t cur_func_num = 0;    // stores total number of created function in order to create lables
+  }; 
 } // namespace
 
 // Creates an instance of the C-style expressions forming pass.
