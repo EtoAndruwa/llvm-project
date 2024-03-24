@@ -27,7 +27,7 @@ namespace
       Operation* rootOp = getOperation();
       OpBuilder builder(&getContext());
 
-      check_operation(rootOp, builder, module);
+      check_operation(builder, nullptr, nullptr, nullptr, rootOp);
       print_debug_data();
     }
 
@@ -35,19 +35,21 @@ namespace
     private:
     
       // checks the operation
-      void check_operation(Operation *op, OpBuilder& builder, ModuleOp& module, Region& region, Block& block)
+      void check_operation(OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {
         llvm::StringRef div_strref = "emitc.div";
         auto cur_op_name = op->getName().getStringRef();
 
-        if (region->getBlocks().size() == 1)
-        {
+        print_op_names(op);
 
+        if (region != nullptr && region->getBlocks().size() == 1)
+        {
+          // llvm::outs() << "region->getBlocks().size() == 1\n";
         }
 
         if (cur_op_name == div_strref)
         {
-          create_div_wrapper(builder, module);
+          // create_div_wrapper(builder, module, region, block, op);
           // auto intType = builder.getIntegerType(32);
           // SmallVector<Type, 2> inputTypes({intType, intType});
           // SmallVector<Type, 1> resultTypes({intType});
@@ -61,7 +63,7 @@ namespace
           OperationState state(builder.getUnknownLoc(), "emitc.call");
           state.addAttribute("callee", calleeAttr);
           Operation *callOp = Operation::create(state);
-          block.push_back(callOp);
+          block->push_back(callOp);
 
 
           // std::string cur_func_name = "foo_" + std::to_string(cur_func_num);
@@ -77,13 +79,13 @@ namespace
           ++cur_func_num;
         }
 
-        for (Region &region: op->getRegions())
+        for (Region &region_it: op->getRegions())
         {
-          check_regions(region, builder, module);
+          check_regions(builder, module, &region_it, block);
         }
       }
 
-      void create_div_wrapper(OpBuilder& builder, ModuleOp& module, Region& region, Block& block)
+      void create_div_wrapper(OpBuilder& builder, ModuleOp* module, Region* region, Block* block, Operation* op)
       {
         Location loc = builder.getUnknownLoc();
         auto funcType = builder.getFunctionType({}, {});
@@ -92,24 +94,24 @@ namespace
         state.addAttribute("sym_name", builder.getStringAttr("foo_0"));
         state.addAttribute("type", TypeAttr::get(funcType));
         Operation *funcOp = Operation::create(state);
-
-        Region &region = module.getBodyRegion();
-        Block &block = region.getBodyBlock();
-        block.push_back(funcOp);
+        block->push_back(funcOp);
+        // Region &region = module->getBodyRegion();
+        // Block &block = region->getBodyBlock();
+        // block.push_back(funcOp);
       }
 
       // iterates on all blocks in the region
-      void check_regions(Region& region, OpBuilder& builder, ModuleOp& module, Region& region, Block& block)
+      void check_regions(OpBuilder& builder, ModuleOp* module, Region* region, Block* block)
       {
-        for (Block &block: region.getBlocks())
-          check_blocks(block, builder, module, region, block);
+        for (Block &block_it: region->getBlocks())
+          check_blocks(builder, module, region, &block_it);
       }
 
       // iterates on all operation in the block
-      void check_blocks(Block &block, OpBuilder& builder, ModuleOp& module, Region& region, Block& block)
+      void check_blocks(OpBuilder& builder, ModuleOp* module, Region* region, Block *block)
       {
-        for (Operation &op: block.getOperations())
-          check_operation(&op, builder, module, region, block);
+        for (Operation &op_it: block->getOperations())
+          check_operation(builder, module, region, block, &op_it);
       }
       
       void getDependentDialects(DialectRegistry &registry) const override 
@@ -117,6 +119,13 @@ namespace
         registry.insert<emitc::EmitCDialect>();
       }
 
+
+      // casts the root operation to the module
+      ModuleOp castToModule(Operation* op) 
+      {
+        return dyn_cast<ModuleOp>(op);
+      }   
+        
       // prints the debugging info to the treminal (DEBUG ONLY)  
       void print_debug_data()
       {
@@ -124,20 +133,38 @@ namespace
 
         outs << "\n=================================DEBUG=================================\n";
         outs << "The total number of created funcs = " << cur_func_num << "\n";
-        // outs << "The total number of pass calls = " << pass_called_num << "\n";
         outs << "=================================DEBUG=================================\n";
       }
 
-      // casts the root operation to the module
-      ModuleOp castToModule(Operation *op) 
+      // prints op's attributes (DEBUG ONLY)  
+      void print_op_attrs(Operation* op)
       {
-        return dyn_cast<ModuleOp>(op);
-      }     
+        static size_t op_number = 0;
+        ArrayRef<NamedAttribute> attrs = op->getAttrs();
+
+        llvm::outs () << "=========================OP_" << op_number << "=========================\n";
+        for (auto attr : attrs) 
+        {
+          llvm::outs() << "Attribute: " << attr.getName() << ", Value: " << attr.getValue() << "\n";
+        }
+        llvm::outs () << "=========================OP_" << op_number << "=========================\n\n";
+        ++op_number;
+      }
+
+      // prints op's names (DEBUG ONLY)  
+      void print_op_names(Operation* op)
+      {
+        static size_t op_number = 0;
+
+        llvm::outs () << "=========================OP_" << op_number << "=========================\n";
+        llvm::outs () << "Operation name: " << op->getName() << "\n";  
+        llvm::outs () << "=========================OP_" << op_number << "=========================\n\n";
+        ++op_number;
+      }
 
     // private variables section
     private:
       static size_t cur_func_num;    // stores total number of created function in order to create lables
-      // static size_t pass_called_num; // stores the total number of times when pass called
   }; 
 
 size_t DivToOuterFuncPass::cur_func_num = 0;    // stores total number of created function in order to create lables
