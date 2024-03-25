@@ -118,8 +118,8 @@ namespace
         Value arg2 = entryBlock->getArgument(1);
         
         // here is the problem with div func
-        // Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
-        // entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
+        Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
+        entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
       }
 
       // prints the types of returms/operand values (DEBUG ONLY)  
@@ -153,23 +153,23 @@ namespace
       }
 
       // creates the types of operands using builder.get...()
-      void build_op_types(SmallVector<Type>& argTypes, std::vector<Type>& operand_types, OpBuilder& builder)
+      void build_op_types(SmallVector<Type>& dest_vec, std::vector<Type>& src_vec, OpBuilder& builder)
       {
-        for (size_t i = 0; i < 2; ++i)
+        for (size_t i = 0; i < src_vec.size(); ++i)
         {
-          switch (get_operand_type(operand_types, i))
+          switch (get_operand_type(src_vec, i))
           {
           case op_types::INT:
-            argTypes.push_back(builder.getIntegerType(get_bit_length(operand_types, i)));
+            dest_vec.push_back(builder.getIntegerType(get_bit_length(src_vec, i)));
             break;
           case op_types::FLOAT:
-            if (get_bit_length(operand_types, i) == 32)
+            if (get_bit_length(src_vec, i) == 32)
             {
-              argTypes.push_back(builder.getF32Type());
+              dest_vec.push_back(builder.getF32Type());
             }
             else 
             {
-              argTypes.push_back(builder.getF64Type());
+              dest_vec.push_back(builder.getF64Type());
             }
             break;
           // case op_types::OPAQUE:
@@ -182,11 +182,11 @@ namespace
       }
 
       // gets the operands types (INT, FLOAT, OPAQUE)
-      op_types get_operand_type(std::vector<Type>& operand_types, size_t operand_index)
+      op_types get_operand_type(std::vector<Type>& src_vec, size_t val_index)
       {
         for (size_t j = 8; j <= 64; j *= 2)
         {
-          if (operand_types[operand_index].isa<IntegerType>())
+          if (src_vec[val_index].isa<IntegerType>())
           {
             return op_types::INT;
           }
@@ -194,7 +194,7 @@ namespace
 
         for (size_t j = 32; j <= 64; j *= 2)
         {
-          if (operand_types[operand_index].isa<FloatType>())
+          if (src_vec[val_index].isa<FloatType>())
           {
             return op_types::FLOAT;
           }
