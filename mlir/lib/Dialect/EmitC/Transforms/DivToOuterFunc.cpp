@@ -28,9 +28,8 @@ namespace
       module_ptr = rootOp; // saving module ptr in the class's field
     
       Region& reg = module_ptr->getRegion(0);
-      // reg.viewGraph();
+
       check_operation(context, nullptr, nullptr, rootOp);
-      // reg.viewGraph();
     }
 
     public:
@@ -57,6 +56,7 @@ namespace
 
         if (cur_op_name == div_strref)
         {
+          llvm::outs() << op->getName().getStringRef();
           // here we must get all operands and their types
 
           std::vector<Type> return_types  = getReturnTypes(op);
@@ -70,23 +70,23 @@ namespace
           create_div_wrapper(context, reg_builder, operand_types, return_types);
 
           // settting builder
-          Type i32Type = IntegerType::get(context, 32);
-          Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
-          OpBuilder builder(op);
+          // Type i32Type = IntegerType::get(context, 32);
+          // Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
+          // OpBuilder builder(op);
 
-          // creating constOp value
-          Value arg1 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
-          Value arg2 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
+          // // creating constOp value
+          // Value arg1 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
+          // Value arg2 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
 
-          // gettin the return value of emitc.div
-          Value returnValue = op->getResult(0);
+          // // gettin the return value of emitc.div
+          // Value returnValue = op->getResult(0);
 
-          SmallVector<Type> argTypes; 
-          SmallVector<Type> retTypes; 
-          build_op_types(argTypes, operand_types, builder); // setting types of args from strings
-          build_op_types(retTypes, return_types, builder); // setting types of ret from strings
+          // SmallVector<Type> argTypes; 
+          // SmallVector<Type> retTypes; 
+          // build_op_types(argTypes, operand_types, builder); // setting types of args from strings
+          // build_op_types(retTypes, return_types, builder); // setting types of ret from strings
 
-          Value mulRes = builder.create<MulOp>(builder.getUnknownLoc(), retTypes[0], arg1, arg2);
+          // Value mulRes = builder.create<MulOp>(builder.getUnknownLoc(), retTypes[0], arg1, arg2);
 
           // for (Operation *userOp : returnValue.getUsers()) 
           // {
@@ -94,14 +94,49 @@ namespace
           // }
 
 
-          module_ptr->print(llvm::outs());
+          // // llvm::outs() << op->getName().getStringRef();
 
-          // here we must call function 
-
+          // // op->remove();
           ++cur_func_num;
+          // // op = mulRes.getDefiningOp();
+          // // check_ops_regions(context, region, block, op);
+          // // return true;
         }
 
-          check_ops_regions(context, region, block, op);
+        check_ops_regions(context, region, block, op); // result of inner logic
+        // return false;
+      }
+
+      // iterates on all regions in the operation
+      void check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op)
+      {
+        for (Region &region_it: op->getRegions())
+        {
+          check_regions(context, &region_it, block);
+        }
+      }
+
+      // iterates on all blocks in the region
+      void check_regions(MLIRContext* context, Region* region, Block* block)
+      {
+        for (Block &block_it: region->getBlocks())
+        {
+          check_blocks(context, region, &block_it);
+        }
+      }
+
+      // iterates on all operation in the block
+      void check_blocks(MLIRContext* context, Region* region, Block* block)
+      {
+        for (Operation &op_it: block->getOperations())
+        {
+          check_operation(context, region, block, &op_it);
+          // if (check_operation(context, region, block, &op_it))
+          // {
+          //   // check_blocks(context, region, block);
+          //   // break;
+          // }
+        }
       }
 
       // return the vector for returns' types
@@ -226,42 +261,6 @@ namespace
         }
 
         // HERE MUST BE OPAQUE
-      }
-
-      // iterates on all regions in the operation
-      void check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op)
-      {
-        size_t reg_count = 0;
-        for (Region &region_it: op->getRegions())
-        {
-          // llvm::outs() << "reg: " << reg_count << "\n";
-          ++reg_count;
-          check_regions(context, &region_it, block);
-        }
-      }
-
-      // iterates on all blocks in the region
-      void check_regions(MLIRContext* context, Region* region, Block* block)
-      {
-        size_t block_count = 0;
-        for (Block &block_it: region->getBlocks())
-        {
-          // llvm::outs() << "block: " << block_count << "\n";
-          ++block_count;
-          check_blocks(context, region, &block_it);
-        }
-      }
-
-      // iterates on all operation in the block
-      void check_blocks(MLIRContext* context, Region* region, Block* block)
-      {
-        size_t op_count = 0;
-        for (Operation &op_it: block->getOperations())
-        {
-          // llvm::outs() << "op: " << op_count << "\n";
-          ++op_count;
-          check_operation(context, region, block, &op_it);
-        }
       }
       
       void getDependentDialects(DialectRegistry &registry) const override 
