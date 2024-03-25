@@ -56,18 +56,23 @@ namespace
 
         if (cur_op_name == div_strref)
         {
-          llvm::outs() << op->getName().getStringRef();
+          // llvm::outs() << op->getName().getStringRef();
           // here we must get all operands and their types
-
-          std::vector<Type> return_types  = getReturnTypes(op);
-          std::vector<Type> operand_types = getOperandTypes(op);
-
-          // here we must get everything for func creation
-
           Region& reg = module_ptr->getRegion(0); // getting the first region in the module
-          OpBuilder reg_builder(reg);
+          OpBuilder wrapper_builder(reg); // settign the builder for that region (ALWAYS!!! to the start of the region)
 
-          create_div_wrapper(context, reg_builder, operand_types, return_types);
+          std::vector<Type> return_types  = getReturnTypes(op); // getting string like 'i32'
+          std::vector<Type> operand_types = getOperandTypes(op); // getting string like 'i32'
+
+          SmallVector<Type> argTypes; // for types built by builder
+          SmallVector<Type> retTypes; // for types built by builder
+          build_op_types(argTypes, operand_types, wrapper_builder); // setting types of args from strings
+          build_op_types(retTypes, return_types, wrapper_builder); // setting types of ret from strings
+
+          FuncOp* funcOp = create_div_wrapper(context, wrapper_builder, argTypes, retTypes); // creates the emitc.div wrapper
+
+          OpBuilder callOp_builder(op);
+          create_call_op(funcOp, op, context, callOp_builder); // creates the callop to the wrapped emitc.div operation
 
           // settting builder
           // Type i32Type = IntegerType::get(context, 32);
@@ -162,13 +167,8 @@ namespace
       }
 
       // creates the wrapped emitc.div func
-      void create_div_wrapper(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
+      FuncOp* create_div_wrapper(MLIRContext* context, OpBuilder& builder, SmallVector<Type>& argTypes, SmallVector<Type>& retTypes)
       {    
-        SmallVector<Type> argTypes; 
-        SmallVector<Type> retTypes; 
-        build_op_types(argTypes, operand_types, builder); // setting types of args from strings
-        build_op_types(retTypes, return_types, builder); // setting types of ret from strings
-
         FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); 
         FuncOp funcOp = builder.create<FuncOp>(builder.getUnknownLoc(), func_name + std::to_string(cur_func_num), funcType);
 
@@ -180,6 +180,15 @@ namespace
 
         Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
         entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
+
+        return &funcOp;
+      }
+
+      void create_call_op(FuncOp* funcOp, Operation* op, MLIRContext* context, OpBuilder& builder)
+      {
+        auto opCall = builder.create<emitc::CallOp>(builder.getUnknownLoc(), *funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)});
+          
+        llvm::outs() << *opCall << "\n";
       }
 
       // prints the types of returms/operand values (DEBUG ONLY)  
