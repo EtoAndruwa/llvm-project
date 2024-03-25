@@ -68,8 +68,33 @@ namespace
           OpBuilder reg_builder(reg);
 
           create_div_wrapper(context, reg_builder, operand_types, return_types);
-        
-          // here we must delete move/delete or something with emitc.div
+
+          // settting builder
+          Type i32Type = IntegerType::get(context, 32);
+          Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
+          OpBuilder builder(op);
+
+          // creating constOp value
+          Value arg1 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
+          Value arg2 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
+
+          // gettin the return value of emitc.div
+          Value returnValue = op->getResult(0);
+
+          SmallVector<Type> argTypes; 
+          SmallVector<Type> retTypes; 
+          build_op_types(argTypes, operand_types, builder); // setting types of args from strings
+          build_op_types(retTypes, return_types, builder); // setting types of ret from strings
+
+          Value mulRes = builder.create<MulOp>(builder.getUnknownLoc(), retTypes[0], arg1, arg2);
+
+          // for (Operation *userOp : returnValue.getUsers()) 
+          // {
+          //   userOp->replaceUsesOfWith(returnValue, mulRes);
+          // }
+
+
+          module_ptr->print(llvm::outs());
 
           // here we must call function 
 
@@ -101,23 +126,23 @@ namespace
           return operandTypes;
       }
 
+      // creates the wrapped emitc.div func
       void create_div_wrapper(MLIRContext* context, OpBuilder& builder, std::vector<Type>& operand_types, std::vector<Type>& return_types)
       {    
         SmallVector<Type> argTypes; 
         SmallVector<Type> retTypes; 
-        build_op_types(argTypes, operand_types, builder);
-        build_op_types(retTypes, return_types, builder);
+        build_op_types(argTypes, operand_types, builder); // setting types of args from strings
+        build_op_types(retTypes, return_types, builder); // setting types of ret from strings
 
-        FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); // here we must specify types 
+        FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); 
         FuncOp funcOp = builder.create<FuncOp>(builder.getUnknownLoc(), func_name + std::to_string(cur_func_num), funcType);
 
         Block* entryBlock = funcOp.addEntryBlock();
-        OpBuilder entryBlock_builder(entryBlock, entryBlock->begin());
+        OpBuilder entryBlock_builder(entryBlock, entryBlock->begin()); // setting builder to the func's entry block
 
-        Value arg1 = entryBlock->getArgument(0);
-        Value arg2 = entryBlock->getArgument(1);
-        
-        // here is the problem with div func
+        Value arg1 = entryBlock->getArgument(0); // getting first arg
+        Value arg2 = entryBlock->getArgument(1); // getting second arg 
+
         Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
         entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
       }
@@ -266,10 +291,10 @@ namespace
 
     // private variables section
     private:
-      std::string func_name = "wrapped_div_func";
-      Operation* module_ptr = nullptr;
+      std::string func_name    = "wrapped_div_func";
+      Operation* module_ptr    = nullptr;
       Region* first_module_reg = nullptr;
-      size_t cur_func_num = 0;    // stores total number of created function in order to create lables
+      size_t cur_func_num      = 0;    // stores total number of created function in order to create lables
   }; 
 } // namespace
 
