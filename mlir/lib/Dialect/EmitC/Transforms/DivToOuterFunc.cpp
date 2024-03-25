@@ -56,8 +56,6 @@ namespace
 
         if (cur_op_name == div_strref)
         {
-          // llvm::outs() << op->getName().getStringRef();
-          // here we must get all operands and their types
           Region& reg = module_ptr->getRegion(0); // getting the first region in the module
           OpBuilder wrapper_builder(reg); // settign the builder for that region (ALWAYS!!! to the start of the region)
 
@@ -72,40 +70,17 @@ namespace
           FuncOp* funcOp = create_div_wrapper(context, wrapper_builder, argTypes, retTypes); // creates the emitc.div wrapper
 
           OpBuilder callOp_builder(op);
-          create_call_op(funcOp, op, context, callOp_builder); // creates the callop to the wrapped emitc.div operation
+          auto callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), *funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)}); // creates the callOp
 
-          // settting builder
-          // Type i32Type = IntegerType::get(context, 32);
-          // Attribute intAttr = IntegerAttr::get(IntegerType::get(context, 32), 42);
-          // OpBuilder builder(op);
-
-          // // creating constOp value
-          // Value arg1 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
-          // Value arg2 = builder.create<ConstantOp>(builder.getUnknownLoc(), i32Type, intAttr);
-
-          // // gettin the return value of emitc.div
-          // Value returnValue = op->getResult(0);
-
-          // SmallVector<Type> argTypes; 
-          // SmallVector<Type> retTypes; 
-          // build_op_types(argTypes, operand_types, builder); // setting types of args from strings
-          // build_op_types(retTypes, return_types, builder); // setting types of ret from strings
-
-          // Value mulRes = builder.create<MulOp>(builder.getUnknownLoc(), retTypes[0], arg1, arg2);
-
-          // for (Operation *userOp : returnValue.getUsers()) 
-          // {
-          //   userOp->replaceUsesOfWith(returnValue, mulRes);
-          // }
-
-
-          // // llvm::outs() << op->getName().getStringRef();
+          Value op_ret_val = op->getResult(0);
+          Value callOp_ret_val = callOp.getResult(0);
+          for (Operation *userOp : op_ret_val.getUsers()) 
+          {
+            userOp->replaceUsesOfWith(op_ret_val, callOp_ret_val);
+          }
 
           // // op->remove();
           ++cur_func_num;
-          // // op = mulRes.getDefiningOp();
-          // // check_ops_regions(context, region, block, op);
-          // // return true;
         }
 
         check_ops_regions(context, region, block, op); // result of inner logic
@@ -182,13 +157,6 @@ namespace
         entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
 
         return &funcOp;
-      }
-
-      void create_call_op(FuncOp* funcOp, Operation* op, MLIRContext* context, OpBuilder& builder)
-      {
-        auto opCall = builder.create<emitc::CallOp>(builder.getUnknownLoc(), *funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)});
-          
-        llvm::outs() << *opCall << "\n";
       }
 
       // prints the types of returms/operand values (DEBUG ONLY)  
