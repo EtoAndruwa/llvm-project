@@ -98,13 +98,14 @@ namespace
 
           OpBuilder callOp_builder(op);
           Operation* callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)}); // creates the callOp
-          replace_div_by_call(op, callOp);
+          
+          replaceFunctionUses(op, callOp);
+          // replace_div_by_call(op, callOp);
 
-          for (auto &use : op->getUses()) 
-          {
-            use.getOwner()->dropAllReferences();
-            
-          }
+          // for (auto &use : op->getUses()) 
+          // {
+          //   use.getOwner()->dropAllReferences();
+          // }
           //reg.viewGraph();
           // op->dropAllReferences();
           op->erase();
@@ -235,6 +236,14 @@ namespace
             operandTypes.push_back(operandType);
           }
           return operandTypes;
+      }
+
+      void replaceFunctionUses(Operation* oldFunc, Operation* newFunc) 
+      {
+        for (auto &use : oldFunc->getUses()) 
+        {
+            use.getOwner()->replaceUsesOfWith(oldFunc, newFunc);
+        }
       }
 
       void replace_div_by_call(Operation* op, Operation* callOp)
