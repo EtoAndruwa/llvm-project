@@ -74,29 +74,31 @@ namespace // <--------- namespace's start
         }
       }
 
-      // 
+      /**
+       * This method transforms one 'emitc.div' operation per pass
+       * into the 'emitc.call' operation to the wrapping function 
+      */
       void transform(MLIRContext* context_ptr, Operation* operation_ptr)
       {
         Region& top_level_region = module_ptr->getRegion(0); // getting the first region in the module
-        OpBuilder wrapper_builder(top_level_region); // setting the builder for that region (ALWAYS!!! to the start of the region)
+        OpBuilder wrapper_builder(top_level_region); // sets the builder (ALWAYS!!! to the start of the region)
 
-        std::vector<Type> return_types  = getReturnTypes(operation_ptr); // getting string like 'i32'
-        std::vector<Type> operand_types = getOperandTypes(operation_ptr); // getting string like 'i32'
+        std::vector<Type> return_types  = getReturnTypes(operation_ptr);  // getting types as strings like 'i32', etc.
+        std::vector<Type> operand_types = getOperandTypes(operation_ptr); // getting types as strings like 'i32', etc.
 
-        SmallVector<Type> argTypes; // for types built by builder
-        SmallVector<Type> retTypes; // for types built by builder
-        build_op_types(argTypes, operand_types, wrapper_builder); // setting types of args from strings
-        build_op_types(retTypes, return_types, wrapper_builder); // setting types of ret from strings
+        SmallVector<Type> argTypes; // stores types built by builder
+        SmallVector<Type> retTypes; // stores types built by builder
+        build_op_types(argTypes, operand_types, wrapper_builder); // sets types of args from strings
+        build_op_types(retTypes, return_types, wrapper_builder);  // sets types of ret from strings
 
-        FuncOp funcOp = create_div_wrapper(context_ptr, wrapper_builder, argTypes, retTypes); // creates the emitc.div wrapper
+        FuncOp funcOp = create_div_wrapper(context_ptr, wrapper_builder, argTypes, retTypes); // creates the 'emitc.div' wrapping function
 
-        OpBuilder callOp_builder(operation_ptr);
+        OpBuilder callOp_builder(operation_ptr); // sets the builder for callOp 
         Operation* callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), funcOp, 
-        ArrayRef<Value>{operation_ptr->getOperand(0), operation_ptr->getOperand(1)}); // creates the callOp
+          ArrayRef<Value>{operation_ptr->getOperand(0), operation_ptr->getOperand(1)}); // creates the 'emitc.call' operation
       
-
         replace_div_uses(operation_ptr, callOp); // replacing all uses of 'emitc.div' to the 'emitc.call'
-        operation_ptr->erase();
+        operation_ptr->erase(); 
         ++cur_func_num;
       }
 
@@ -202,20 +204,23 @@ namespace // <--------- namespace's start
         }
       }
 
-      // 
+      /**
+       * This method creates the wrapper around the emitc.div opearation with
+       * appropriate return type and operands' types.
+      */
       FuncOp create_div_wrapper(MLIRContext* context_ptr, OpBuilder& builder, SmallVector<Type>& argTypes, SmallVector<Type>& retTypes)
       {    
-        FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); 
+        FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); // sets the type of the function based on operands' types and return value type
         FuncOp funcOp = builder.create<FuncOp>(builder.getUnknownLoc(), func_name + std::to_string(cur_func_num), funcType);
 
-        Block* entryBlock = funcOp.addEntryBlock();
-        OpBuilder entryBlock_builder(entryBlock, entryBlock->begin()); // setting builder to the func's entry block
+        Block* entryBlock = funcOp.addEntryBlock(); // adds the entry block to the funcOp
+        OpBuilder entryBlock_builder(entryBlock, entryBlock->begin()); // sets builder to the func's entry block
 
-        Value arg1 = entryBlock->getArgument(0); // getting first arg
-        Value arg2 = entryBlock->getArgument(1); // getting second arg 
+        Value arg1 = entryBlock->getArgument(0); // gets the first arg
+        Value arg2 = entryBlock->getArgument(1); // gets the second arg 
 
-        Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
-        entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
+        Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2); // creates 'emitc.div' operation
+        entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult}); // creates 'emitc.return' operation
 
         return funcOp;
       }
