@@ -61,7 +61,6 @@ namespace
 
         if (cur_op_name == div_strref)
         {
-          llvm::outs() << op->getName().getStringRef() << "\n";
           Region& reg = module_ptr->getRegion(0); // getting the first region in the module
           OpBuilder wrapper_builder(reg); // settign the builder for that region (ALWAYS!!! to the start of the region)
 
@@ -77,23 +76,10 @@ namespace
 
           OpBuilder callOp_builder(op);
           Operation* callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)}); // creates the callOp
-          
-          // llvm::outs() << *module_ptr << "\n";
+        
 
           replaceFunctionUses(op, callOp);
-          // llvm::outs() << *module_ptr << "\n";
-          // replace_div_by_call(op, callOp);
-
-          // for (auto &use : op->getUses()) 
-          // {
-          //   use.getOwner()->dropAllReferences();
-          // }
-          //reg.viewGraph();
-          // op->dropAllReferences();
           op->erase();
-
-          // llvm::outs() << *module_ptr << "\n";
-          // op = callOp;
           ++cur_func_num;
           return true;
         }
@@ -130,17 +116,13 @@ namespace
 
           for (;itBegin != itEnd;)
           {
-            print_op_in_block(&(*itBegin));
             if(check_blocks(context, region, &(*itBegin)))
             {
-              llvm::outs() << "true!\n";
               itBegin = region->getBlocks().begin();
               itEnd = region->getBlocks().end();
-              ++itBegin;
             }
             else 
             {
-              llvm::outs() << "false!\n";
               ++itBegin;
             }
           }
