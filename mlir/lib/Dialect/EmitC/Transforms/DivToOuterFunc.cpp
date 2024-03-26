@@ -26,10 +26,31 @@ namespace
       MLIRContext* context = &getContext();
       Operation* rootOp = getOperation();
       module_ptr = rootOp; // saving module ptr in the class's field
-    
-      Region& reg = module_ptr->getRegion(0);
 
-      check_operation(context, nullptr, nullptr, rootOp);
+      reg_ptr = &(module_ptr->getRegion(0));
+      total_block_num = countBlocksInRegion(reg_ptr);
+      size_t block_shift = 0;
+      reg_ptr->viewGraph();
+
+      // llvm::outs() << *module_ptr << "\n\n";
+
+      // check_regions(context, reg_ptr, nullptr);
+
+      // llvm::outs() << *module_ptr << "\n\n";
+
+
+      // reg_ptr->viewGraph();
+
+      bool transformed = false;
+      while (!transformed)
+      {
+        transformed = check_regions(context, reg_ptr, nullptr, block_shift);
+        if (transformed)
+        {
+          ++block_shift;
+        }
+      }
+      reg_ptr->viewGraph();
     }
 
     public:
@@ -49,13 +70,19 @@ namespace
     private:
     
       // checks the operation
-      void check_operation(MLIRContext* context, Region* region, Block* block, Operation* op)
+      bool check_operation(MLIRContext* context, Region* region, Block* block, Operation* op, const size_t& block_shift)
       {
-        llvm::StringRef div_strref = "emitc.div";
+        if (op == nullptr)
+        {
+          return false;
+        }
+
+        static llvm::StringRef div_strref = "emitc.div";
         auto cur_op_name = op->getName().getStringRef();
 
         if (cur_op_name == div_strref)
         {
+          llvm::outs() << op->getName().getStringRef() << "\n";
           Region& reg = module_ptr->getRegion(0); // getting the first region in the module
           OpBuilder wrapper_builder(reg); // settign the builder for that region (ALWAYS!!! to the start of the region)
 
@@ -67,60 +94,129 @@ namespace
           build_op_types(argTypes, operand_types, wrapper_builder); // setting types of args from strings
           build_op_types(retTypes, return_types, wrapper_builder); // setting types of ret from strings
 
-          FuncOp* funcOp = create_div_wrapper(context, wrapper_builder, argTypes, retTypes); // creates the emitc.div wrapper
+          FuncOp funcOp = create_div_wrapper(context, wrapper_builder, argTypes, retTypes); // creates the emitc.div wrapper
 
           OpBuilder callOp_builder(op);
-          auto callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), *funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)}); // creates the callOp
+          Operation* callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)}); // creates the callOp
+          replace_div_by_call(op, callOp);
 
-          Value op_ret_val = op->getResult(0);
-          Value callOp_ret_val = callOp.getResult(0);
-          for (Operation *userOp : op_ret_val.getUsers()) 
+          for (auto &use : op->getUses()) 
           {
-            userOp->replaceUsesOfWith(op_ret_val, callOp_ret_val);
+            use.getOwner()->dropAllReferences();
+            
           }
-
-          // // op->remove();
+          //reg.viewGraph();
+          // op->dropAllReferences();
+          op->erase();
+          // op = callOp;
           ++cur_func_num;
+          //reg.viewGraph();
+          return true;
         }
-
-        check_ops_regions(context, region, block, op); // result of inner logic
-        // return false;
+        else 
+        {
+          return check_ops_regions(context, region, block, op, block_shift);
+        }
       }
 
       // iterates on all regions in the operation
-      void check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op)
+      bool check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op, const size_t& block_shift)
       {
-        for (Region &region_it: op->getRegions())
+        if (op != nullptr)
         {
-          check_regions(context, &region_it, block);
+          for (Region &region_it: op->getRegions())
+          {
+            if (check_regions(context, &region_it, block, block_shift))
+            {
+              return true;
+            }
+          }
+          return false;
+        }
+        else 
+        {
+          llvm::outs() << "op is nullptr" << op;
+          return false;
         }
       }
 
       // iterates on all blocks in the region
-      void check_regions(MLIRContext* context, Region* region, Block* block)
+      bool check_regions(MLIRContext* context, Region* region, Block* block, const size_t& block_shift)
       {
-        for (Block &block_it: region->getBlocks())
+        if (region != nullptr)
         {
-          check_blocks(context, region, &block_it);
+          if (block_shift == 0)
+          {
+            for (Block &block_it: region->getBlocks())
+            {
+              if(check_blocks(context, region, &block_it, 0))
+              {
+                return true;
+              }
+            }
+            return false;
+          }
+          else 
+          {
+            size_t cur_block = 0;
+            for (Block &block_it: region->getBlocks())
+            {
+              if (cur_block != block_shift)
+              {
+                ++cur_block;
+                continue;
+              }
+              else 
+              {
+                if(check_blocks(context, region, &block_it, 0))
+                {
+                  return true;
+                }
+              }
+            }
+            return false;
+          }
+        }
+        else 
+        {
+          llvm::outs() << "region is nullptr" << region;
+          return false;
         }
       }
 
       // iterates on all operation in the block
-      void check_blocks(MLIRContext* context, Region* region, Block* block)
+      bool check_blocks(MLIRContext* context, Region* region, Block* block, const size_t& block_shift)
       {
-        for (Operation &op_it: block->getOperations())
+        if (block != nullptr)
         {
-          check_operation(context, region, block, &op_it);
-          // if (check_operation(context, region, block, &op_it))
-          // {
-          //   // check_blocks(context, region, block);
-          //   // break;
-          // }
+          for (Operation &op_it: block->getOperations())
+          {
+            if (check_operation(context, region, block, &op_it, block_shift))
+            {
+              ++cur_changed_block;
+              return true;
+            }
+          }
+        }
+        else 
+        {
+          llvm::outs() << "block is nullptr" << block;
+          return false;
         }
       }
 
+      size_t countBlocksInRegion(Region* region) 
+      {
+        size_t count = 0;
+        for (Block &block : region->getBlocks()) 
+        {
+            count++;
+        }
+        return count;
+      }
+
       // return the vector for returns' types
-      std::vector<Type> getReturnTypes(Operation *op) 
+      std::vector<Type> getReturnTypes(Operation* op) 
       {
           std::vector<Type> returnTypes;
           for (Type resultType: op->getResultTypes()) 
@@ -131,7 +227,7 @@ namespace
       }
 
       // return the vector for operands' types
-      std::vector<Type> getOperandTypes(Operation *op) 
+      std::vector<Type> getOperandTypes(Operation* op) 
       {
           std::vector<Type> operandTypes;
           for (Type operandType: op->getOperandTypes()) 
@@ -141,8 +237,18 @@ namespace
           return operandTypes;
       }
 
+      void replace_div_by_call(Operation* op, Operation* callOp)
+      {
+          Value op_ret_val = op->getResult(0);
+          Value callOp_ret_val = callOp->getResult(0);
+          for (Operation *userOp : op_ret_val.getUsers()) 
+          {
+            userOp->replaceUsesOfWith(op_ret_val, callOp_ret_val);
+          }
+      }
+
       // creates the wrapped emitc.div func
-      FuncOp* create_div_wrapper(MLIRContext* context, OpBuilder& builder, SmallVector<Type>& argTypes, SmallVector<Type>& retTypes)
+      FuncOp create_div_wrapper(MLIRContext* context, OpBuilder& builder, SmallVector<Type>& argTypes, SmallVector<Type>& retTypes)
       {    
         FunctionType funcType = builder.getFunctionType({argTypes}, {retTypes}); 
         FuncOp funcOp = builder.create<FuncOp>(builder.getUnknownLoc(), func_name + std::to_string(cur_func_num), funcType);
@@ -156,7 +262,7 @@ namespace
         Value divResult = entryBlock_builder.create<DivOp>(entryBlock_builder.getUnknownLoc(), retTypes[0], arg1, arg2);
         entryBlock_builder.create<emitc::ReturnOp>(entryBlock_builder.getUnknownLoc(), Value{divResult});
 
-        return &funcOp;
+        return funcOp;
       }
 
       // prints the types of returms/operand values (DEBUG ONLY)  
@@ -240,7 +346,7 @@ namespace
         // HERE MUST BE OPAQUE
       }
       
-      void getDependentDialects(DialectRegistry &registry) const override 
+      void getDependentDialects(DialectRegistry& registry) const override 
       {
         registry.insert<emitc::EmitCDialect>();
       }
@@ -269,7 +375,9 @@ namespace
     private:
       std::string func_name    = "wrapped_div_func";
       Operation* module_ptr    = nullptr;
-      Region* first_module_reg = nullptr;
+      Region* reg_ptr          = nullptr;
+      size_t total_block_num  = 0;
+      size_t cur_changed_block  = 0; 
       size_t cur_func_num      = 0;    // stores total number of created function in order to create lables
   }; 
 } // namespace
