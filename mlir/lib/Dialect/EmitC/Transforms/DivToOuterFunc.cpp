@@ -28,29 +28,8 @@ namespace
       module_ptr = rootOp; // saving module ptr in the class's field
 
       reg_ptr = &(module_ptr->getRegion(0));
-      total_block_num = countBlocksInRegion(reg_ptr);
-      size_t block_shift = 0;
-      reg_ptr->viewGraph();
 
-      // llvm::outs() << *module_ptr << "\n\n";
-
-      // check_regions(context, reg_ptr, nullptr);
-
-      // llvm::outs() << *module_ptr << "\n\n";
-
-
-      // reg_ptr->viewGraph();
-
-      bool transformed = false;
-      while (!transformed)
-      {
-        transformed = check_regions(context, reg_ptr, nullptr, block_shift);
-        if (transformed)
-        {
-          ++block_shift;
-        }
-      }
-      reg_ptr->viewGraph();
+      check_operation(context, nullptr, nullptr, rootOp);
     }
 
     public:
@@ -70,7 +49,7 @@ namespace
     private:
     
       // checks the operation
-      bool check_operation(MLIRContext* context, Region* region, Block* block, Operation* op, const size_t& block_shift)
+      bool check_operation(MLIRContext* context, Region* region, Block* block, Operation* op)
       {
         if (op == nullptr)
         {
@@ -99,7 +78,10 @@ namespace
           OpBuilder callOp_builder(op);
           Operation* callOp = callOp_builder.create<emitc::CallOp>(callOp_builder.getUnknownLoc(), funcOp, ArrayRef<Value>{op->getOperand(0), op->getOperand(1)}); // creates the callOp
           
+          // llvm::outs() << *module_ptr << "\n";
+
           replaceFunctionUses(op, callOp);
+          // llvm::outs() << *module_ptr << "\n";
           // replace_div_by_call(op, callOp);
 
           // for (auto &use : op->getUses()) 
@@ -109,101 +91,95 @@ namespace
           //reg.viewGraph();
           // op->dropAllReferences();
           op->erase();
+
+          // llvm::outs() << *module_ptr << "\n";
           // op = callOp;
           ++cur_func_num;
-          //reg.viewGraph();
           return true;
         }
         else 
         {
-          return check_ops_regions(context, region, block, op, block_shift);
+          check_ops_regions(context, region, block, op);
+          return false;
         }
       }
 
       // iterates on all regions in the operation
-      bool check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op, const size_t& block_shift)
+      void check_ops_regions(MLIRContext* context, Region* region, Block* block, Operation* op)
       {
         if (op != nullptr)
         {
           for (Region &region_it: op->getRegions())
           {
-            if (check_regions(context, &region_it, block, block_shift))
-            {
-              return true;
-            }
+            check_regions(context, &region_it, block);
           }
-          return false;
         }
         else 
         {
           llvm::outs() << "op is nullptr" << op;
-          return false;
         }
       }
 
       // iterates on all blocks in the region
-      bool check_regions(MLIRContext* context, Region* region, Block* block, const size_t& block_shift)
+      void check_regions(MLIRContext* context, Region* region, Block* block)
       {
         if (region != nullptr)
         {
-          if (block_shift == 0)
+          auto itBegin = region->getBlocks().begin();
+          auto itEnd = region->getBlocks().end();
+
+          for (;itBegin != itEnd;)
           {
-            for (Block &block_it: region->getBlocks())
+            print_op_in_block(&(*itBegin));
+            if(check_blocks(context, region, &(*itBegin)))
             {
-              if(check_blocks(context, region, &block_it, 0))
-              {
-                return true;
-              }
+              llvm::outs() << "true!\n";
+              itBegin = region->getBlocks().begin();
+              itEnd = region->getBlocks().end();
+              ++itBegin;
             }
-            return false;
-          }
-          else 
-          {
-            size_t cur_block = 0;
-            for (Block &block_it: region->getBlocks())
+            else 
             {
-              if (cur_block != block_shift)
-              {
-                ++cur_block;
-                continue;
-              }
-              else 
-              {
-                if(check_blocks(context, region, &block_it, 0))
-                {
-                  return true;
-                }
-              }
+              llvm::outs() << "false!\n";
+              ++itBegin;
             }
-            return false;
           }
         }
         else 
         {
           llvm::outs() << "region is nullptr" << region;
-          return false;
         }
       }
 
       // iterates on all operation in the block
-      bool check_blocks(MLIRContext* context, Region* region, Block* block, const size_t& block_shift)
+      bool check_blocks(MLIRContext* context, Region* region, Block* block)
       {
         if (block != nullptr)
         {
           for (Operation &op_it: block->getOperations())
           {
-            if (check_operation(context, region, block, &op_it, block_shift))
+            if(check_operation(context, region, block, &op_it))
             {
-              ++cur_changed_block;
               return true;
             }
           }
+          return false;
         }
         else 
         {
           llvm::outs() << "block is nullptr" << block;
           return false;
         }
+      }
+
+      void print_op_in_block(Block* block)
+      {
+        llvm::outs() << "=============================================================\n";
+        for (Operation &op_it: block->getOperations())  
+        {
+          llvm::outs() << op_it << "\n";
+        }
+        llvm::outs() << "=============================================================\n";
       }
 
       size_t countBlocksInRegion(Region* region) 
@@ -240,9 +216,11 @@ namespace
 
       void replaceFunctionUses(Operation* oldFunc, Operation* newFunc) 
       {
+        Value op_ret_val = oldFunc->getResult(0);
+        Value callOp_ret_val = newFunc->getResult(0);
         for (auto &use : oldFunc->getUses()) 
         {
-            use.getOwner()->replaceUsesOfWith(oldFunc, newFunc);
+            use.getOwner()->replaceUsesOfWith(op_ret_val, callOp_ret_val);
         }
       }
 
