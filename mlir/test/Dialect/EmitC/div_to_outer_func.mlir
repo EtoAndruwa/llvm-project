@@ -3,336 +3,285 @@
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func49(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func48(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i16)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func47(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i16)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func46(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func45(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func44(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func43(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func42(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func41(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func40(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func39(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func38(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func37(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func36(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func35(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func34(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func33(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func32(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func31(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func30(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(f32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(f32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func29(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(f32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(f32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func28(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(f32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func27(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(f32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(f32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func26(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(f32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(f32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func25(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func24(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func23(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func22(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func21(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func20(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func19(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func18(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func17(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func16(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func15(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i16)]]
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func14(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i16)]]
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func13(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i16)]]
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func12(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i16)]]
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func11(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i16)]]
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func10(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func9(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func8(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func7(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func6(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @wrapped_div_func5(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(f64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f64)]], %[[ARG2:.*]]: [[TYPE2:(f64)]]) -> [[RET_TYPE:(f64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func4(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(f32)]], %[[ARG2:.*]]: [[TYPE2:(f32)]]) -> [[RET_TYPE:(f32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func3(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i64)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i64)]], %[[ARG2:.*]]: [[TYPE2:(i64)]]) -> [[RET_TYPE:(i64)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func2(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i32)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i32)]], %[[ARG2:.*]]: [[TYPE2:(i32)]]) -> [[RET_TYPE:(i32)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func1(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i16)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i16)]], %[[ARG2:.*]]: [[TYPE2:(i16)]]) -> [[RET_TYPE:(i16)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // CHECK-LABEL: emitc.func @wrapped_div_func0(
-// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i8)]] {
+// CHECK-SAME: %[[ARG1:.*]]: [[TYPE1:(i8)]], %[[ARG2:.*]]: [[TYPE2:(i8)]]) -> [[RET_TYPE:(i8)]] 
 // CHECK: %[[RET:.*]] = emitc.div %[[ARG1]], %[[ARG2]] : ([[TYPE1]], [[TYPE2]]) -> [[RET_TYPE]]
 // CHECK-NEXT: emitc.return %[[RET]] : [[RET_TYPE]]
-// CHECK-NEXT: }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo0() -> i8
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func0(%{{.*}}, %{{.*}}) : (i8, i8) -> i8
 // CHECK-NEXT: emitc.return %[[RET]] : i8
-// CHECK-NEXT: }
+
 emitc.func @foo0() -> i8 
 {
     %zero = emitc.literal "0.0F" : i8
@@ -344,10 +293,9 @@ emitc.func @foo0() -> i8
 }
 
 // CHECK-LABEL: emitc.func @foo1() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func1(%{{.*}}, %{{.*}}) : (i16, i16) -> i16
 // CHECK-NEXT: emitc.return %[[RET]] : i16
-// CHECK-NEXT: }
+
 emitc.func @foo1() -> i16 
 {
     %zero = emitc.literal "0.0F" : i16
@@ -359,10 +307,9 @@ emitc.func @foo1() -> i16
 }
 
 // CHECK-LABEL: emitc.func @foo2() -> i32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func2(%{{.*}}, %{{.*}}) : (i32, i32) -> i32
 // CHECK-NEXT: emitc.return %[[RET]] : i32
-// CHECK-NEXT: }
+
 emitc.func @foo2() -> i32 
 {
     %zero = emitc.literal "0.0F" : i32
@@ -374,10 +321,9 @@ emitc.func @foo2() -> i32
 }
 
 // CHECK-LABEL: emitc.func @foo3() -> i64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func3(%{{.*}}, %{{.*}}) : (i64, i64) -> i64
 // CHECK-NEXT: emitc.return %[[RET]] : i64
-// CHECK-NEXT: }
+
 emitc.func @foo3() -> i64 
 {
     %zero = emitc.literal "0.0F" : i64
@@ -389,10 +335,9 @@ emitc.func @foo3() -> i64
 }
 
 // CHECK-LABEL: emitc.func @foo4() -> f32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func4(%{{.*}}, %{{.*}}) : (f32, f32) -> f32
 // CHECK-NEXT: emitc.return %[[RET]] : f32
-// CHECK-NEXT: }
+
 emitc.func @foo4() -> f32 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -404,10 +349,9 @@ emitc.func @foo4() -> f32
 }
 
 // CHECK-LABEL: emitc.func @foo5() -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func5(%{{.*}}, %{{.*}}) : (f64, f64) -> f64
 // CHECK-NEXT: emitc.return %[[RET]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo5() -> f64 
 {
     %zero = emitc.literal "0.0F" : f64
@@ -420,11 +364,10 @@ emitc.func @foo5() -> f64
 
 // ----------------------------------------------------------------------------------------------------------------
 
-// CHECK-LABEL: emitc.func @foo6() -> i8
-// CHECK: { 
+// CHECK-LABEL: emitc.func @foo6() -> i8 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func6(%{{.*}}, %{{.*}}) : (i16, i16) -> i8
 // CHECK-NEXT: emitc.return %[[RET]] : i8
-// CHECK-NEXT: }
+
 emitc.func @foo6() -> i8 
 {
     %zero = emitc.literal "0.0F" : i16
@@ -436,10 +379,9 @@ emitc.func @foo6() -> i8
 }
 
 // CHECK-LABEL: emitc.func @foo7() -> i8
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func7(%{{.*}}, %{{.*}}) : (i32, i32) -> i8
 // CHECK-NEXT: emitc.return %[[RET]] : i8
-// CHECK-NEXT: }
+
 emitc.func @foo7() -> i8 
 {
     %zero = emitc.literal "0.0F" : i32
@@ -451,10 +393,9 @@ emitc.func @foo7() -> i8
 }
 
 // CHECK-LABEL: emitc.func @foo8() -> i8
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func8(%{{.*}}, %{{.*}}) : (i64, i64) -> i8
 // CHECK-NEXT: emitc.return %[[RET]] : i8
-// CHECK-NEXT: }
+
 emitc.func @foo8() -> i8 
 {
     %zero = emitc.literal "0.0F" : i64
@@ -466,10 +407,9 @@ emitc.func @foo8() -> i8
 }
 
 // CHECK-LABEL: emitc.func @foo9() -> i8
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func9(%{{.*}}, %{{.*}}) : (f32, f32) -> i8
 // CHECK-NEXT: emitc.return %[[RET]] : i8
-// CHECK-NEXT: }
+
 emitc.func @foo9() -> i8 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -481,10 +421,9 @@ emitc.func @foo9() -> i8
 }
 
 // CHECK-LABEL: emitc.func @foo10() -> i8
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func10(%{{.*}}, %{{.*}}) : (f64, f64) -> i8
 // CHECK-NEXT: emitc.return %[[RET]] : i8
-// CHECK-NEXT: }
+
 emitc.func @foo10() -> i8 
 {
     %zero = emitc.literal "0.0F" : f64
@@ -498,10 +437,9 @@ emitc.func @foo10() -> i8
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo11() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func11(%{{.*}}, %{{.*}}) : (i8, i8) -> i16
 // CHECK-NEXT: emitc.return %[[RET]] : i16
-// CHECK-NEXT: }
+
 emitc.func @foo11() -> i16 
 {
     %zero = emitc.literal "0.0F" : i8
@@ -513,10 +451,9 @@ emitc.func @foo11() -> i16
 }
 
 // CHECK-LABEL: emitc.func @foo12() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func12(%{{.*}}, %{{.*}}) : (i32, i32) -> i16
 // CHECK-NEXT: emitc.return %[[RET]] : i16
-// CHECK-NEXT: }
+
 emitc.func @foo12() -> i16 
 {
     %zero = emitc.literal "0.0F" : i32
@@ -528,10 +465,9 @@ emitc.func @foo12() -> i16
 }
 
 // CHECK-LABEL: emitc.func @foo13() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func13(%{{.*}}, %{{.*}}) : (i64, i64) -> i16
 // CHECK-NEXT: emitc.return %[[RET]] : i16
-// CHECK-NEXT: }
+
 emitc.func @foo13() -> i16 
 {
     %zero = emitc.literal "0.0F" : i64
@@ -543,10 +479,9 @@ emitc.func @foo13() -> i16
 }
 
 // CHECK-LABEL: emitc.func @foo14() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func14(%{{.*}}, %{{.*}}) : (f32, f32) -> i16
 // CHECK-NEXT: emitc.return %[[RET]] : i16
-// CHECK-NEXT: }
+
 emitc.func @foo14() -> i16 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -558,10 +493,9 @@ emitc.func @foo14() -> i16
 }
 
 // CHECK-LABEL: emitc.func @foo15() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func15(%{{.*}}, %{{.*}}) : (f64, f64) -> i16
 // CHECK-NEXT: emitc.return %[[RET]] : i16
-// CHECK-NEXT: }
+
 emitc.func @foo15() -> i16 
 {
     %zero = emitc.literal "0.0F" : f64
@@ -575,10 +509,9 @@ emitc.func @foo15() -> i16
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo16() -> i32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func16(%{{.*}}, %{{.*}}) : (i8, i8) -> i32
 // CHECK-NEXT: emitc.return %[[RET]] : i32
-// CHECK-NEXT: }
+
 emitc.func @foo16() -> i32 
 {
     %zero = emitc.literal "0.0F" : i8
@@ -590,10 +523,9 @@ emitc.func @foo16() -> i32
 }
 
 // CHECK-LABEL: emitc.func @foo17() -> i32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func17(%{{.*}}, %{{.*}}) : (i16, i16) -> i32
 // CHECK-NEXT: emitc.return %[[RET]] : i32
-// CHECK-NEXT: }
+
 emitc.func @foo17() -> i32 
 {
     %zero = emitc.literal "0.0F" : i16
@@ -605,10 +537,9 @@ emitc.func @foo17() -> i32
 }
 
 // CHECK-LABEL: emitc.func @foo18() -> i32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func18(%{{.*}}, %{{.*}}) : (i64, i64) -> i32
 // CHECK-NEXT: emitc.return %[[RET]] : i32
-// CHECK-NEXT: }
+
 emitc.func @foo18() -> i32 
 {
     %zero = emitc.literal "0.0F" : i64
@@ -620,10 +551,9 @@ emitc.func @foo18() -> i32
 }
 
 // CHECK-LABEL: emitc.func @foo19() -> i32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func19(%{{.*}}, %{{.*}}) : (f32, f32) -> i32
 // CHECK-NEXT: emitc.return %[[RET]] : i32
-// CHECK-NEXT: }
+
 emitc.func @foo19() -> i32 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -635,10 +565,9 @@ emitc.func @foo19() -> i32
 }
 
 // CHECK-LABEL: emitc.func @foo20() -> i32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func20(%{{.*}}, %{{.*}}) : (f64, f64) -> i32
 // CHECK-NEXT: emitc.return %[[RET]] : i32
-// CHECK-NEXT: }
+
 emitc.func @foo20() -> i32 
 {
     %zero = emitc.literal "0.0F" : f64
@@ -652,10 +581,9 @@ emitc.func @foo20() -> i32
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo21() -> i64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func21(%{{.*}}, %{{.*}}) : (i8, i8) -> i64
 // CHECK-NEXT: emitc.return %[[RET]] : i64
-// CHECK-NEXT: }
+
 emitc.func @foo21() -> i64 
 {
     %zero = emitc.literal "0.0F" : i8
@@ -667,10 +595,9 @@ emitc.func @foo21() -> i64
 }
 
 // CHECK-LABEL: emitc.func @foo22() -> i64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func22(%{{.*}}, %{{.*}}) : (i16, i16) -> i64
 // CHECK-NEXT: emitc.return %[[RET]] : i64
-// CHECK-NEXT: }
+
 emitc.func @foo22() -> i64 
 {
     %zero = emitc.literal "0.0F" : i16
@@ -682,10 +609,9 @@ emitc.func @foo22() -> i64
 }
 
 // CHECK-LABEL: emitc.func @foo23() -> i64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func23(%{{.*}}, %{{.*}}) : (i32, i32) -> i64
 // CHECK-NEXT: emitc.return %[[RET]] : i64
-// CHECK-NEXT: }
+
 emitc.func @foo23() -> i64 
 {
     %zero = emitc.literal "0.0F" : i32
@@ -697,10 +623,9 @@ emitc.func @foo23() -> i64
 }
 
 // CHECK-LABEL: emitc.func @foo24() -> i64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func24(%{{.*}}, %{{.*}}) : (f32, f32) -> i64
 // CHECK-NEXT: emitc.return %[[RET]] : i64
-// CHECK-NEXT: }
+
 emitc.func @foo24() -> i64 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -712,10 +637,9 @@ emitc.func @foo24() -> i64
 }
 
 // CHECK-LABEL: emitc.func @foo25() -> i64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func25(%{{.*}}, %{{.*}}) : (f64, f64) -> i64
 // CHECK-NEXT: emitc.return %[[RET]] : i64
-// CHECK-NEXT: }
+
 emitc.func @foo25() -> i64 
 {
     %zero = emitc.literal "0.0F" : f64
@@ -729,10 +653,9 @@ emitc.func @foo25() -> i64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo26() -> f32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func26(%{{.*}}, %{{.*}}) : (i8, i8) -> f32
 // CHECK-NEXT: emitc.return %[[RET]] : f32
-// CHECK-NEXT: }
+
 emitc.func @foo26() -> f32 
 {
     %zero = emitc.literal "0.0F" : i8
@@ -744,10 +667,9 @@ emitc.func @foo26() -> f32
 }
 
 // CHECK-LABEL: emitc.func @foo27() -> f32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func27(%{{.*}}, %{{.*}}) : (i16, i16) -> f32
 // CHECK-NEXT: emitc.return %[[RET]] : f32
-// CHECK-NEXT: }
+
 emitc.func @foo27() -> f32 
 {
     %zero = emitc.literal "0.0F" : i16
@@ -759,10 +681,9 @@ emitc.func @foo27() -> f32
 }
 
 // CHECK-LABEL: emitc.func @foo28() -> f32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func28(%{{.*}}, %{{.*}}) : (i32, i32) -> f32
 // CHECK-NEXT: emitc.return %[[RET]] : f32
-// CHECK-NEXT: }
+
 emitc.func @foo28() -> f32 
 {
     %zero = emitc.literal "0.0F" : i32
@@ -774,10 +695,9 @@ emitc.func @foo28() -> f32
 }
 
 // CHECK-LABEL: emitc.func @foo29() -> f32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func29(%{{.*}}, %{{.*}}) : (i64, i64) -> f32
 // CHECK-NEXT: emitc.return %[[RET]] : f32
-// CHECK-NEXT: }
+
 emitc.func @foo29() -> f32 
 {
     %zero = emitc.literal "0.0F" : i64
@@ -789,10 +709,9 @@ emitc.func @foo29() -> f32
 }
 
 // CHECK-LABEL: emitc.func @foo30() -> f32
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func30(%{{.*}}, %{{.*}}) : (f64, f64) -> f32
 // CHECK-NEXT: emitc.return %[[RET]] : f32
-// CHECK-NEXT: }
+
 emitc.func @foo30() -> f32 
 {
     %zero = emitc.literal "0.0F" : f64
@@ -806,10 +725,9 @@ emitc.func @foo30() -> f32
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo31() -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func31(%{{.*}}, %{{.*}}) : (i8, i8) -> f64
 // CHECK-NEXT: emitc.return %[[RET]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo31() -> f64 
 {
     %zero = emitc.literal "0.0F" : i8
@@ -821,10 +739,9 @@ emitc.func @foo31() -> f64
 }
 
 // CHECK-LABEL: emitc.func @foo32() -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func32(%{{.*}}, %{{.*}}) : (i16, i16) -> f64
 // CHECK-NEXT: emitc.return %[[RET]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo32() -> f64 
 {
     %zero = emitc.literal "0.0F" : i16
@@ -836,10 +753,9 @@ emitc.func @foo32() -> f64
 }
 
 // CHECK-LABEL: emitc.func @foo33() -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func33(%{{.*}}, %{{.*}}) : (i32, i32) -> f64
 // CHECK-NEXT: emitc.return %[[RET]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo33() -> f64 
 {
     %zero = emitc.literal "0.0F" : i32
@@ -851,10 +767,9 @@ emitc.func @foo33() -> f64
 }
 
 // CHECK-LABEL: emitc.func @foo34() -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func34(%{{.*}}, %{{.*}}) : (i64, i64) -> f64
 // CHECK-NEXT: emitc.return %[[RET]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo34() -> f64 
 {
     %zero = emitc.literal "0.0F" : i64
@@ -866,10 +781,9 @@ emitc.func @foo34() -> f64
 }
 
 // CHECK-LABEL: emitc.func @foo35() -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @wrapped_div_func35(%{{.*}}, %{{.*}}) : (f32, f32) -> f64
 // CHECK-NEXT: emitc.return %[[RET]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo35() -> f64 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -883,11 +797,10 @@ emitc.func @foo35() -> f64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo36() -> f64
-// CHECK: { 
 // CHECK: %[[RET1:.*]] = emitc.call @wrapped_div_func36(%{{.*}}, %{{.*}}) : (i32, i32) -> f64
 // CHECK: %[[RET2:.*]] = emitc.call @wrapped_div_func37(%{{.*}}, %{{.*}}) : (f32, f32) -> f64
 // CHECK-NEXT: emitc.return %[[RET2]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo36() -> f64 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -909,12 +822,11 @@ emitc.func @foo36() -> f64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo37() -> f64
-// CHECK: { 
 // CHECK: %[[RET1:.*]] = emitc.call @wrapped_div_func38(%{{.*}}, %{{.*}}) : (i64, i32) -> f64
 // CHECK: %[[RET2:.*]] = emitc.call @wrapped_div_func39(%{{.*}}, %{{.*}}) : (i32, i32) -> f64
 // CHECK: %[[RET3:.*]] = emitc.call @wrapped_div_func40(%{{.*}}, %{{.*}}) : (f32, f32) -> f64
 // CHECK-NEXT: emitc.return %[[RET1]] : f64
-// CHECK-NEXT: }
+
 emitc.func @foo37() -> f64 
 {
     %zero = emitc.literal "0.0F" : f32
@@ -941,11 +853,8 @@ emitc.func @foo37() -> f64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo38() -> f64
-// CHECK: { 
 // CHECK: %[[VAL7:.*]] = emitc.call @wrapped_div_func41(%{{.*}}, %{{.*}}) : (f32, f32) -> f64
 // CHECK: %[[VAL8:.*]] = emitc.call @wrapped_div_func42(%{{.*}}, %{{.*}}) : (i32, i32) -> f64
-// CHECK: emitc.return %{{.*}} : f64
-// CHECK: }
 
 emitc.func @foo38() -> f64 
 {
@@ -976,7 +885,6 @@ emitc.func @foo38() -> f64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo39() -> i8
-// CHECK: { 
 // CHECK: %[[VAL7:.*]] = emitc.call @wrapped_div_func43(%[[ARG1:.*]], %[[ARG2:.*]]) : (f32, i32) -> i8
 // CHECK-NOT: [[VAL7]] = emitc.div %[[ARG1]], %[[ARG2]] : (f32, i32) -> i8
 // CHECK: %[[VAL8:.*]] = emitc.call @wrapped_div_func44(%[[ARG3:.*]], %[[ARG4:.*]]) : (i32, f32) -> i8
@@ -985,8 +893,6 @@ emitc.func @foo38() -> f64
 // CHECK-NOT: [[VAL9]] = emitc.div %[[ARG5]], %[[ARG6]] : (f32, i32) -> i8
 // CHECK: %[[VAL10:.*]] = emitc.call @wrapped_div_func46(%[[ARG7:.*]], %[[ARG8:.*]]) : (i32, i32) -> i8
 // CHECK-NOT: [[VAL10]] = emitc.div %[[ARG7]], %[[ARG8]] : (f32, i32) -> i8
-// CHECK: emitc.return %{{.*}} : i8
-// CHECK: }
 
 emitc.func @foo39() -> i8 
 {
@@ -1029,13 +935,11 @@ emitc.func @foo39() -> i8
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo41() -> i16
-// CHECK: { 
 // CHECK: %[[VAL7:.*]] = emitc.call @wrapped_div_func47(%[[ARG1:.*]], %[[ARG2:.*]]) : (i8, i8) -> i16
 // CHECK-NOT: [[VAL7]] = emitc.div %[[ARG1]], %[[ARG2]] : (i8, i8) -> i16
 // CHECK: %[[VAL8:.*]] = emitc.call @wrapped_div_func48(%[[ARG2]], %[[ARG1]]) : (i8, i8) -> i16
 // CHECK-NOT: [[VAL8]] = emitc.div %[[ARG2]], %[[ARG1]] : (i8, i8) -> i16
-// CHECK: emitc.return %{{.*}} : i16
-// CHECK: }
+
 emitc.func @foo41() -> i16 
 {
     %zero1 = emitc.literal "0.0F" : i8
@@ -1058,10 +962,9 @@ emitc.func @foo41() -> i16
 }
 
 // CHECK-LABEL: emitc.func @foo40() -> i16
-// CHECK: { 
 // CHECK: %[[RET:.*]] = emitc.call @foo41() : () -> i16
 // CHECK: emitc.return %[[RET]] : i16
-// CHECK: }
+
 emitc.func @foo40() -> i16 
 {
     %ret = emitc.call @foo41() : () -> i16
@@ -1071,14 +974,9 @@ emitc.func @foo40() -> i16
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo42() -> i64
-// CHECK: { 
-// CHECK: %[[RET1:.*]] = emitc.expression : i64 {
 // CHECK: %[[RET2:.*]] = emitc.call @wrapped_div_func49(%[[ARG1:.*]], %[[ARG2:.*]]) : (i32, i32) -> i64
 // CHECK-NOT: %[[RET2]] = emitc.div %[[ARG1]], %[[ARG2]] : (i32, i32) -> i64
-// CHECK: emitc.yield %[[RET2]] : i64
-// CHECK: }
-// CHECK: emitc.return %[[RET1]] : i64
-// CHECK: }
+
 emitc.func @foo42() -> i64 
 {
     %a = emitc.literal "23" : i32
@@ -1098,19 +996,11 @@ emitc.func @foo42() -> i64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo43() -> i16
-// CHECK: { 
-// CHECK: %[[RET1:.*]] = emitc.expression : i16 {
 // CHECK: %[[RES1:.*]] = emitc.call @wrapped_div_func50(%[[ARG1:.*]], %[[ARG2:.*]]) : (i64, i64) -> i16
 // CHECK-NOT: %[[RES1]] = emitc.div %[[ARG1]], %[[ARG2]] : (i64, i64) -> i16
-// CHECK: emitc.yield %[[RES1]] : i16
-// CHECK: }
-// CHECK: %[[RET2:.*]] = emitc.expression : i16 {
 // CHECK: %[[RES2:.*]] = emitc.call @wrapped_div_func51(%[[ARG2]], %[[ARG1]]) : (i64, i64) -> i16
 // CHECK-NOT: %[[RES2]] = emitc.div %[[ARG2]], %[[ARG1]] : (i64, i64) -> i16
-// CHECK: emitc.yield %[[RES2]] : i16
-// CHECK: }
-// CHECK: emitc.return %{{.*}} : i16
-// CHECK: }
+
 emitc.func @foo43() -> i16 
 {
     %a = emitc.literal "23" : i64
@@ -1143,13 +1033,9 @@ emitc.func @foo43() -> i16
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo44(%{{.*}}: i32, %{{.*}}: i32) -> f64
-// CHECK: { 
-// CHECK: {
 // CHECK: %[[RES:.*]] = emitc.call @wrapped_div_func52(%[[ARG1:.*]], %[[ARG2:.*]]) : (i32, i32) -> f64
 // CHECK-NOT: %[[RES]] = emitc.div %[[ARG1]], %[[ARG2]] : (i32, i32) -> f64
-// CHECK: }
 // CHECK: emitc.return %{{.*}} : f64
-// CHECK: }
 emitc.func @foo44(%start: i32, %end: i32) -> f64
 {
     %step_size = emitc.literal "1" : i32
@@ -1166,24 +1052,13 @@ emitc.func @foo44(%start: i32, %end: i32) -> f64
 // ----------------------------------------------------------------------------------------------------------------
 
 // CHECK-LABEL: emitc.func @foo45(%{{.*}}: i32, %{{.*}}: i32) -> f64
-// CHECK: { 
 // CHECK: %[[RET:.*]] = "emitc.variable"() <{value = #emitc.opaque<"100.0F">}> : () -> f64
-// CHECK: emitc.for %{{.*}} = %{{.*}} to %{{.*}} step %{{.*}} : i32
-// CHECK: {
-// CHECK: emitc.if %{{.*}} {
-// CHECK: %[[RET1:.*]] = emitc.expression : f64 {
 // CHECK: %[[RES1:.*]] = emitc.call @wrapped_div_func53(%[[ARG1:.*]], %[[ARG2:.*]]) : (i64, i64) -> f64
 // CHECK-NOT: %[[RES1]] = emitc.div %[[ARG1]], %[[ARG2]] : (i64, i64) -> f64
-// CHECK: }
-// CHECK: } else {
-// CHECK: %[[RET2:.*]] = emitc.expression : f64 {
 // CHECK: %[[RES2:.*]] = emitc.call @wrapped_div_func54(%[[ARG2]], %[[ARG1]]) : (i64, i64) -> f64
 // CHECK-NOT: %[[RES2]] = emitc.div %[[ARG2]], %[[ARG1]] : (i64, i64) -> f64
-// CHECK: }
-// CHECK: }
-// CHECK: }
 // CHECK: emitc.return %[[RET]] : f64
-// CHECK: }
+
 emitc.func @foo45(%start: i32, %end: i32) -> f64
 {
     %a = emitc.literal "23" : i64
