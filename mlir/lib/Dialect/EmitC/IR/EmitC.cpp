@@ -13,6 +13,7 @@
 #include "mlir/IR/BuiltinTypes.h"
 #include "mlir/IR/DialectImplementation.h"
 #include "mlir/IR/IRMapping.h"
+#include "mlir/IR/Operation.h"
 #include "mlir/IR/Types.h"
 #include "mlir/Interfaces/FunctionImplementation.h"
 #include "llvm/ADT/STLExtras.h"
@@ -20,6 +21,7 @@
 #include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/FormatVariadic.h"
+#include "llvm/Support/LogicalResult.h"
 
 using namespace mlir;
 using namespace mlir::emitc;
@@ -1388,10 +1390,42 @@ void SwitchOp::getRegionInvocationBounds(
 //===----------------------------------------------------------------------===//
 // FileOp
 //===----------------------------------------------------------------------===//
+
 void FileOp::build(OpBuilder &builder, OperationState &state, StringRef id) {
   state.addRegion()->emplaceBlock();
   state.attributes.push_back(
       builder.getNamedAttr("id", builder.getStringAttr(id)));
+}
+
+//===----------------------------------------------------------------------===//
+// Pre & Post operators
+//===----------------------------------------------------------------------===//
+
+LogicalResult checkPrePostOperation(Operation *op) {
+  Operation *parentOp = op->getParentOp();
+
+  if (op->getNumResults() && !isa<emitc::ExpressionOp>(parentOp))
+    return op->emitOpError()
+           << "op with result cannot be outside the emitc::ExpressionOp";
+
+  if (op->getNumResults() == 0 && !isa<LValueType>(op->getOperand(0).getType()))
+    return op->emitOpError() << "use of the operation outside the "
+                                "emitc::Expression allowed only for Lvalues";
+
+  return success();
+}
+
+LogicalResult PreIncrementOp::verify() {
+  return checkPrePostOperation(this->getOperation());
+}
+LogicalResult PreDecrementOp::verify() {
+  return checkPrePostOperation(this->getOperation());
+}
+LogicalResult PostIncrementOp::verify() {
+  return checkPrePostOperation(this->getOperation());
+}
+LogicalResult PostDecrementOp::verify() {
+  return checkPrePostOperation(this->getOperation());
 }
 
 //===----------------------------------------------------------------------===//

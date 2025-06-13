@@ -41,6 +41,14 @@ class EmitC_UnaryOp<string mnemonic, list<Trait> traits = []> :
   let assemblyFormat = "operands attr-dict `:` functional-type(operands, results)";
 }
 
+// Base class for unary operations.
+class EmitC_PrePostUnaryOp<string mnemonic, list<Trait> traits = []> :
+    EmitC_Op<mnemonic, traits> {
+  let arguments = (ins AnyTypeOf<[EmitCType, EmitC_LValueType]>);
+  let results = (outs Optional<EmitCType>);
+  let assemblyFormat = "operands attr-dict `:` functional-type(operands, results)";
+}
+
 // Base class for binary operations.
 class EmitC_BinaryOp<string mnemonic, list<Trait> traits = []> :
     EmitC_Op<mnemonic, traits> {
@@ -1132,6 +1140,66 @@ def EmitC_UnaryPlusOp : EmitC_UnaryOp<"unary_plus", [CExpression]> {
     int32_t v2 = +v1;
     ```
   }];
+}
+
+def EmitC_PreIncrementOp : EmitC_PrePostUnaryOp<"pre_increment", [CExpression]> {
+  let summary = "Pre-increment op";
+  let description = [{
+    TODO
+  }];
+
+  let extraClassDeclaration = [{
+    bool isPostfixOperation () { return false; }
+
+    ::llvm::StringRef getOperationString () { return "++"; }
+  }];
+
+  let hasVerifier = 1;
+}
+
+def EmitC_PostIncrementOp : EmitC_PrePostUnaryOp<"post_increment", [CExpression]> {
+  let summary = "Pre-increment op";
+  let description = [{
+    TODO
+  }];
+
+  let extraClassDeclaration = [{
+    bool isPostfixOperation () { return true; }
+
+    ::llvm::StringRef getOperationString () { return "++"; }
+  }];
+
+  let hasVerifier = 1;
+}
+
+def EmitC_PreDecrementOp : EmitC_PrePostUnaryOp<"pre_decrement", [CExpression]> {
+  let summary = "Pre-increment op";
+  let description = [{
+    TODO
+  }];
+
+  let extraClassDeclaration = [{
+    bool isPostfixOperation () { return false; }
+
+    ::llvm::StringRef getOperationString () { return "--"; }
+  }];
+
+  let hasVerifier = 1;
+}
+
+def EmitC_PostDecrementOp : EmitC_PrePostUnaryOp<"post_decrement", [CExpression]> {
+  let summary = "Pre-increment op";
+  let description = [{
+    TODO
+  }];
+
+  let extraClassDeclaration = [{
+    bool isPostfixOperation () { return true; }
+
+    ::llvm::StringRef getOperationString () { return "--"; }
+  }];
+
+  let hasVerifier = 1;
 }
 
 def EmitC_VariableOp : EmitC_Op<"variable", []> {

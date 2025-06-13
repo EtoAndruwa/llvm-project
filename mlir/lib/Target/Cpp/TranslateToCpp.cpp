@@ -21,9 +21,11 @@
 #include "llvm/ADT/ScopedHashTable.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/StringMap.h"
+#include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/FormatVariadic.h"
+#include "llvm/Support/LogicalResult.h"
 #include <stack>
 #include <utility>
 
@@ -77,6 +79,10 @@ static FailureOr<int> getOperatorPrecedence(Operation *operation) {
       .Case<emitc::BitwiseAndOp>([&](auto op) { return 7; })
       .Case<emitc::BitwiseLeftShiftOp>([&](auto op) { return 11; })
       .Case<emitc::BitwiseNotOp>([&](auto op) { return 15; })
+      .Case<emitc::PreIncrementOp>([&](auto op) { return 15; })
+      .Case<emitc::PreDecrementOp>([&](auto op) { return 15; })
+      .Case<emitc::PostIncrementOp>([&](auto op) { return 16; })
+      .Case<emitc::PostDecrementOp>([&](auto op) { return 16; })
       .Case<emitc::BitwiseOrOp>([&](auto op) { return 5; })
       .Case<emitc::BitwiseRightShiftOp>([&](auto op) { return 11; })
       .Case<emitc::BitwiseXorOp>([&](auto op) { return 6; })
@@ -372,6 +378,26 @@ static LogicalResult printOperation(CppEmitter &emitter,
   Attribute value = constantOp.getValue();
 
   return printConstantOp(emitter, operation, value);
+}
+
+static LogicalResult printPrePostOperation(CppEmitter &emitter, Operation *op,
+                                           bool isPostfixOperation,
+                                           StringRef operatorStr) {
+  raw_ostream &os = emitter.ostream();
+
+  if (isPostfixOperation) {
+    if (failed(emitter.emitOperand(op->getOperand(0))))
+      return failure();
+
+    os << operatorStr;
+  } else {
+    os << operatorStr;
+
+    if (failed(emitter.emitOperand(op->getOperand(0))))
+      return failure();
+  }
+
+  return success();
 }
 
 static LogicalResult printOperation(CppEmitter &emitter,
@@ -1615,6 +1641,11 @@ LogicalResult CppEmitter::emitOperation(Operation &op, bool trailingSemicolon) {
                 emitc::UnaryPlusOp, emitc::VariableOp, emitc::VerbatimOp>(
 
               [&](auto op) { return printOperation(*this, op); })
+          .Case<emitc::PreIncrementOp, emitc::PostIncrementOp,
+                emitc::PreDecrementOp, emitc::PostDecrementOp>([&](auto op) {
+            return printPrePostOperation(*this, op, op.isPostfixOperation(),
+                                         op.getOperationString());
+          })
           // Func ops.
           .Case<func::CallOp, func::FuncOp, func::ReturnOp>(
               [&](auto op) { return printOperation(*this, op); })
